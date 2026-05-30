@@ -4,7 +4,8 @@
 
 ### Backend (100% Implementado)
 - ✅ Autenticação JWT completa
-- ✅ 4 endpoints REST implementados
+- ✅ CRUD de Contas (Accounts)
+- ✅ 9 endpoints REST implementados
 - ✅ Validação com class-validator
 - ✅ Guards e estratégias Passport
 - ✅ CORS configurado
@@ -12,6 +13,7 @@
 
 ### Frontend (100% Implementado)
 - ✅ Formulários de login e registro
+- ✅ CRUD completo de contas bancárias
 - ✅ Validação com React Hook Form + Zod
 - ✅ Integração com authStore (Zustand)
 - ✅ Feedback visual com toasts (Sonner)
@@ -127,6 +129,55 @@ podman compose up -d
 - ✅ Token removido do localStorage
 - ✅ Redirecionamento para `/login`
 
+### Teste 6: CRUD de Contas
+
+#### 6.1 Criar Nova Conta
+
+1. Faça login na aplicação
+2. Acesse `/accounts` ou clique em "Contas" no menu
+3. Clique no botão "Nova Conta"
+4. Preencha o formulário:
+   - **Nome**: Nubank
+   - **Tipo**: Conta Corrente
+   - **Saldo Inicial**: 1000.00
+5. Clique em "Criar"
+
+**Resultado Esperado**:
+- ✅ Toast de sucesso aparece
+- ✅ Nova conta aparece na lista
+- ✅ Card mostra ícone correto (Wallet)
+- ✅ Saldo exibido: R$ 1.000,00
+
+#### 6.2 Editar Conta
+
+1. Na lista de contas, clique no ícone de editar (lápis)
+2. Altere o nome para "Nubank Conta Principal"
+3. Altere o saldo inicial para 1500.00
+4. Clique em "Atualizar"
+
+**Resultado Esperado**:
+- ✅ Toast de sucesso
+- ✅ Nome e saldo atualizados no card
+
+#### 6.3 Criar Diferentes Tipos de Conta
+
+Crie mais 2 contas para testar os ícones:
+- **Poupança**: Nome: "Poupança Caixa", Tipo: Conta Poupança, Saldo: 500
+- **Cartão**: Nome: "Visa Itaú", Tipo: Cartão de Crédito, Saldo: 0
+
+**Resultado Esperado**:
+- ✅ Conta Poupança mostra ícone de porquinho (PiggyBank)
+- ✅ Cartão de Crédito mostra ícone de cartão (CreditCard)
+
+#### 6.4 Deletar Conta
+
+1. Clique no ícone de lixeira em uma conta
+2. Confirme a exclusão no dialog
+
+**Resultado Esperado**:
+- ✅ Toast de sucesso
+- ✅ Conta removida da lista
+
 ---
 
 ## 🔍 Teste com cURL (Backend Direto)
@@ -168,6 +219,41 @@ curl -X POST http://localhost:3000/api/v1/auth/refresh \
   -d '{
     "refreshToken": "YOUR_REFRESH_TOKEN"
   }'
+```
+
+### Listar Contas
+```bash
+curl -X GET http://localhost:3000/api/v1/accounts \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+### Criar Conta
+```bash
+curl -X POST http://localhost:3000/api/v1/accounts \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Nubank",
+    "type": "CHECKING",
+    "initialBalance": 1000
+  }'
+```
+
+### Atualizar Conta
+```bash
+# Substitua ACCOUNT_ID pelo ID da conta
+curl -X PATCH http://localhost:3000/api/v1/accounts/ACCOUNT_ID \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Nubank Conta Principal"
+  }'
+```
+
+### Deletar Conta
+```bash
+curl -X DELETE http://localhost:3000/api/v1/accounts/ACCOUNT_ID \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
 ---
@@ -258,28 +344,31 @@ podman exec -it personal-finance-db psql -U postgres -d personal_finance
 
 ## 🎯 Próximos Passos
 
-Após confirmar que a autenticação está funcionando:
+Módulos já implementados:
+- ✅ **Autenticação** (M1.1) - Login, registro, JWT, guards
+- ✅ **CRUD de Contas** (M1.2) - Criar, listar, editar, deletar contas
 
-1. **Implementar Dashboard** (M1.5)
-   - Cards de resumo
-   - Gráficos com Recharts
-   - Lista de transações recentes
+Próximos módulos a implementar:
 
-2. **CRUD de Contas** (M1.2)
-   - Listar contas
-   - Criar nova conta
-   - Editar/deletar conta
+1. **CRUD de Categorias** (M1.3)
+   - Listar categorias (10 pré-carregadas no seed)
+   - Editar categorias existentes
+   - Criar novas categorias personalizadas
+   - Tempo estimado: ~1.5h
 
-3. **CRUD de Categorias** (M1.3)
-   - Listar categorias (10 pré-carregadas)
-   - Editar categorias
-   - Criar novas categorias
-
-4. **CRUD de Transações** (M1.4)
-   - Listar transações
-   - Criar transação
+2. **CRUD de Transações** (M1.4)
+   - Listar transações com paginação
+   - Criar transação vinculada a conta e categoria
    - Editar/deletar transação
-   - Filtros por data/categoria/conta
+   - Filtros por data, categoria, conta, tipo
+   - Tempo estimado: ~3h
+
+3. **Dashboard** (M1.5)
+   - Cards de resumo (saldo total, receitas, despesas)
+   - Gráfico de gastos por categoria (Recharts)
+   - Gráfico de tendência mensal
+   - Lista de transações recentes
+   - Tempo estimado: ~2h
 
 ---
 
@@ -293,4 +382,6 @@ Após confirmar que a autenticação está funcionando:
 ---
 
 **Última atualização**: 30/05/2026
-**Status**: Backend e Frontend de Autenticação 100% Completos ✅
+**Status**: 
+- ✅ M1.1 Autenticação - 100% Completo
+- ✅ M1.2 CRUD de Contas - 100% Completo
