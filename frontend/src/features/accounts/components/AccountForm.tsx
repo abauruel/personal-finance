@@ -35,14 +35,14 @@ export function AccountForm({ account, onSubmit, onCancel, isLoading = false }: 
     resolver: zodResolver(accountSchema),
     defaultValues: account
       ? {
-          name: account.name,
-          type: account.type,
-          initialBalance: String(account.initialBalance || 0),
-        }
+        name: account.name,
+        type: account.type,
+        initialBalance: String(account.initialBalance || 0),
+      }
       : {
-          type: 'CHECKING',
-          initialBalance: '0',
-        },
+        type: 'CHECKING',
+        initialBalance: '0',
+      },
   });
 
   const handleFormSubmit = async (data: AccountFormData) => {

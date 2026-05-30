@@ -35,9 +35,9 @@ const LoginPage: React.FC = () => {
     try {
       setIsLoading(true);
       const response = await authApi.login(data);
-      
+
       setAuth(response.user, response.accessToken, response.refreshToken);
-      
+
       toast.success('Login realizado com sucesso!');
       navigate(ROUTES.DASHBOARD);
     } catch (error: any) {

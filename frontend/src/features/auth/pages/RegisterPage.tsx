@@ -41,9 +41,9 @@ const RegisterPage: React.FC = () => {
       setIsLoading(true);
       const { name, email, password } = data;
       const response = await authApi.register({ name, email, password });
-      
+
       setAuth(response.user, response.accessToken, response.refreshToken);
-      
+
       toast.success('Conta criada com sucesso!');
       navigate(ROUTES.DASHBOARD);
     } catch (error: any) {

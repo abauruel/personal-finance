@@ -4,7 +4,7 @@ import type { CreateAccountDto, UpdateAccountDto } from './dto';
 
 @Injectable()
 export class AccountsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findAll(userId: string) {
     return this.prisma.account.findMany({

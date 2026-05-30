@@ -79,6 +79,7 @@ export interface Transaction {
   status: TransactionStatus;
   isRecurring: boolean;
   recurringId?: string;
+  notes?: string;
   createdAt: Date;
   updatedAt: Date;
   account?: Account;
@@ -103,3 +104,19 @@ export interface RecurringTransaction {
   category?: Category;
   account?: Account;
 }
+
+// DTOs for API requests
+export interface CreateTransactionDto {
+  accountId: string;
+  categoryId: string;
+  date: string;
+  amount: number;
+  description: string;
+  paymentType: PaymentType;
+  status?: TransactionStatus;
+  notes?: string;
+  isRecurring?: boolean;
+  recurringId?: string;
+}
+
+export type UpdateTransactionDto = Partial<CreateTransactionDto>;
