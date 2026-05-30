@@ -1,35 +1,63 @@
-import React from 'react';
-import { Card } from '../../../components/ui';
+import { useQuery } from '@tanstack/react-query';
+import { dashboardApi } from '../api/dashboardApi';
+import { StatCard } from '../components/StatCard';
+import { CategoryChart } from '../components/CategoryChart';
+import { TrendChart } from '../components/TrendChart';
+import { RecentTransactions } from '../components/RecentTransactions';
 
-const DashboardPage: React.FC = () => {
+const DashboardPage = () => {
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: dashboardApi.getStats,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-gray-500">Carregando dashboard...</p>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-gray-500">Erro ao carregar dados</p>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Dashboard</h1>
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <Card>
-          <div className="text-sm text-gray-500 mb-1">Saldo Total</div>
-          <div className="text-2xl font-bold text-gray-900">R$ 0,00</div>
-        </Card>
-        <Card>
-          <div className="text-sm text-gray-500 mb-1">Receitas do Mês</div>
-          <div className="text-2xl font-bold text-green-600">R$ 0,00</div>
-        </Card>
-        <Card>
-          <div className="text-sm text-gray-500 mb-1">Despesas do Mês</div>
-          <div className="text-2xl font-bold text-red-600">R$ 0,00</div>
-        </Card>
-        <Card>
-          <div className="text-sm text-gray-500 mb-1">Balanço</div>
-          <div className="text-2xl font-bold text-gray-900">R$ 0,00</div>
-        </Card>
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <StatCard
+          title="Saldo Total"
+          value={stats.summary.totalBalance}
+          type="balance"
+        />
+        <StatCard
+          title="Receitas"
+          value={stats.summary.totalIncome}
+          type="income"
+        />
+        <StatCard
+          title="Despesas"
+          value={stats.summary.totalExpenses}
+          type="expense"
+        />
       </div>
 
-      <Card title="Transações Recentes">
-        <p className="text-gray-600 text-center py-8">
-          Dashboard em desenvolvimento...
-        </p>
-      </Card>
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <CategoryChart data={stats.categoryExpenses} />
+        <TrendChart data={stats.monthlyTrend} />
+      </div>
+
+      {/* Recent Transactions */}
+      <RecentTransactions transactions={stats.recentTransactions} />
     </div>
   );
 };
