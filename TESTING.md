@@ -5,7 +5,8 @@
 ### Backend (100% Implementado)
 - ✅ Autenticação JWT completa
 - ✅ CRUD de Contas (Accounts)
-- ✅ 9 endpoints REST implementados
+- ✅ CRUD de Categorias (Categories)
+- ✅ 14 endpoints REST implementados
 - ✅ Validação com class-validator
 - ✅ Guards e estratégias Passport
 - ✅ CORS configurado
@@ -14,6 +15,7 @@
 ### Frontend (100% Implementado)
 - ✅ Formulários de login e registro
 - ✅ CRUD completo de contas bancárias
+- ✅ CRUD completo de categorias
 - ✅ Validação com React Hook Form + Zod
 - ✅ Integração com authStore (Zustand)
 - ✅ Feedback visual com toasts (Sonner)
@@ -178,6 +180,94 @@ Crie mais 2 contas para testar os ícones:
 - ✅ Toast de sucesso
 - ✅ Conta removida da lista
 
+### Teste 7: CRUD de Categorias
+
+#### 7.1 Visualizar Categorias Padrão
+
+1. Faça login na aplicação
+2. Acesse `/categories` ou clique em "Categorias" no menu
+3. Observe a seção "Categorias Padrão"
+
+**Resultado Esperado**:
+- ✅ 10 categorias padrão são exibidas
+- ✅ Cada categoria mostra ícone colorido e nome
+- ✅ Badge "Padrão" aparece em cada uma
+- ✅ Não há botões de editar/deletar (são somente leitura)
+
+**Categorias esperadas**:
+- 🏠 Moradia (azul)
+- ⚡ Contas (verde)
+- 🍔 Alimentação (laranja)
+- 🚗 Transporte (amarelo)
+- 🎮 Lazer (roxo)
+- 💊 Saúde (vermelho)
+- 📚 Educação (azul)
+- ✈️ Viagens (ciano)
+- 🎬 Entretenimento (rosa)
+- 👕 Vestuário (índigo)
+
+#### 7.2 Criar Categoria Personalizada
+
+1. Clique no botão "Nova Categoria"
+2. Preencha o formulário:
+   - **Nome**: Investimentos
+   - **Ícone**: Clique no emoji 📈
+   - **Cor**: Selecione verde (#10B981)
+3. Observe o preview da categoria no topo do formulário
+4. Clique em "Criar"
+
+**Resultado Esperado**:
+- ✅ Toast de sucesso
+- ✅ Nova categoria aparece na seção "Minhas Categorias"
+- ✅ Categoria mostra ícone verde com 📈
+- ✅ Botões de editar e deletar disponíveis
+
+#### 7.3 Editar Categoria Personalizada
+
+1. Na seção "Minhas Categorias", clique no ícone de editar
+2. Altere o nome para "Investimentos Mensais"
+3. Altere o ícone para 💰
+4. Altere a cor para azul (#3B82F6)
+5. Clique em "Atualizar"
+
+**Resultado Esperado**:
+- ✅ Toast de sucesso
+- ✅ Categoria atualizada com novo nome, ícone e cor
+
+#### 7.4 Tentar Editar Categoria Padrão
+
+1. Tente clicar no botão de editar em uma categoria padrão
+
+**Resultado Esperado**:
+- ✅ Não há botões de editar/deletar (categorias padrão são protegidas)
+
+#### 7.5 Deletar Categoria Personalizada
+
+1. Clique no ícone de lixeira em uma categoria personalizada
+2. Confirme a exclusão no dialog
+
+**Resultado Esperado**:
+- ✅ Toast de sucesso
+- ✅ Categoria removida da lista
+
+#### 7.6 Icon e Color Picker
+
+1. Abra o modal de criar categoria
+2. Teste o icon picker:
+   - Clique em diferentes emojis
+   - Observe o preview atualizando em tempo real
+3. Teste o color picker:
+   - Clique em diferentes cores
+   - Observe o fundo do preview mudando
+4. Verifique que o ícone selecionado aparece sobre a cor escolhida
+
+**Resultado Esperado**:
+- ✅ Preview atualiza instantaneamente
+- ✅ 30 ícones disponíveis para escolher
+- ✅ 10 cores pré-definidas
+- ✅ Ícone selecionado tem borda azul
+- ✅ Cor selecionada tem ring ao redor
+
 ---
 
 ## 🔍 Teste com cURL (Backend Direto)
@@ -253,6 +343,44 @@ curl -X PATCH http://localhost:3000/api/v1/accounts/ACCOUNT_ID \
 ### Deletar Conta
 ```bash
 curl -X DELETE http://localhost:3000/api/v1/accounts/ACCOUNT_ID \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+### Listar Categorias
+```bash
+curl -X GET http://localhost:3000/api/v1/categories \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
+```
+
+### Criar Categoria
+```bash
+curl -X POST http://localhost:3000/api/v1/categories \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Investimentos",
+    "icon": "📈",
+    "color": "#10B981"
+  }'
+```
+
+### Atualizar Categoria
+```bash
+# Substitua CATEGORY_ID pelo ID da categoria
+curl -X PATCH http://localhost:3000/api/v1/categories/CATEGORY_ID \
+  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Investimentos Mensais",
+    "icon": "💰",
+    "color": "#3B82F6"
+  }'
+```
+
+### Deletar Categoria
+```bash
+# Nota: Não funciona para categorias padrão (isDefault=true)
+curl -X DELETE http://localhost:3000/api/v1/categories/CATEGORY_ID \
   -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
 ```
 
@@ -347,23 +475,19 @@ podman exec -it personal-finance-db psql -U postgres -d personal_finance
 Módulos já implementados:
 - ✅ **Autenticação** (M1.1) - Login, registro, JWT, guards
 - ✅ **CRUD de Contas** (M1.2) - Criar, listar, editar, deletar contas
+- ✅ **CRUD de Categorias** (M1.3) - 10 padrões + personalizadas com icon/color picker
 
 Próximos módulos a implementar:
 
-1. **CRUD de Categorias** (M1.3)
-   - Listar categorias (10 pré-carregadas no seed)
-   - Editar categorias existentes
-   - Criar novas categorias personalizadas
-   - Tempo estimado: ~1.5h
-
-2. **CRUD de Transações** (M1.4)
+1. **CRUD de Transações** (M1.4) - **Próximo recomendado**
    - Listar transações com paginação
    - Criar transação vinculada a conta e categoria
    - Editar/deletar transação
    - Filtros por data, categoria, conta, tipo
+   - Atualizar saldo da conta automaticamente
    - Tempo estimado: ~3h
 
-3. **Dashboard** (M1.5)
+2. **Dashboard** (M1.5)
    - Cards de resumo (saldo total, receitas, despesas)
    - Gráfico de gastos por categoria (Recharts)
    - Gráfico de tendência mensal
@@ -385,3 +509,4 @@ Próximos módulos a implementar:
 **Status**: 
 - ✅ M1.1 Autenticação - 100% Completo
 - ✅ M1.2 CRUD de Contas - 100% Completo
+- ✅ M1.3 CRUD de Categorias - 100% Completo
