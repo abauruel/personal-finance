@@ -1,0 +1,265 @@
+{
+  "version": 2,
+  "skills": {
+    "tlc-spec-driven": {
+      "name": "tlc-spec-driven",
+      "source": "local",
+      "contentHash": "69867b0e19be1fb556d2e697f0f18f1de0363d1aa2de9d36754d5b107156357c",
+      "installedAt": "2026-05-30T14:12:37.207Z",
+      "updatedAt": "2026-05-30T14:12:37.236Z",
+      "agents": [
+        "cursor",
+        "claude-code",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "codenavi": {
+      "name": "codenavi",
+      "source": "local",
+      "contentHash": "23ac05b7f2d8df8311129d41432eba248bdcf14e9ace3f17c581976f7d888ada",
+      "installedAt": "2026-05-30T14:16:53.854Z",
+      "updatedAt": "2026-05-30T14:16:54.049Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "coding-guidelines": {
+      "name": "coding-guidelines",
+      "source": "local",
+      "contentHash": "28a414c715d3c41aae28a25e2f109813ec3f246f76b5567c1e7d6a128cd289ff",
+      "installedAt": "2026-05-30T14:16:53.861Z",
+      "updatedAt": "2026-05-30T14:16:54.052Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "create-adr": {
+      "name": "create-adr",
+      "source": "local",
+      "contentHash": "47ec663c849e8c1620c6f33a7be0055acdcf838c27ab7c16f44260244b80195a",
+      "installedAt": "2026-05-30T14:16:53.867Z",
+      "updatedAt": "2026-05-30T14:16:54.065Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "create-rfc": {
+      "name": "create-rfc",
+      "source": "local",
+      "contentHash": "3f391b6c4397bb1590bbad511eca95c297dd0467e65385fa28b3724851c42ea8",
+      "installedAt": "2026-05-30T14:16:53.873Z",
+      "updatedAt": "2026-05-30T14:16:54.069Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "cursor-subagent-creator": {
+      "name": "cursor-subagent-creator",
+      "source": "local",
+      "contentHash": "658a170d783a694e638814bed35a738184795da2d0f0b36489cac94a478cd8d7",
+      "installedAt": "2026-05-30T14:16:53.893Z",
+      "updatedAt": "2026-05-30T14:16:54.073Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "excalidraw-studio": {
+      "name": "excalidraw-studio",
+      "source": "local",
+      "contentHash": "08f4964859a421cccfc52314f2e5b3484b1163ecf558ccdbb6746127229b9399",
+      "installedAt": "2026-05-30T14:16:53.926Z",
+      "updatedAt": "2026-05-30T14:16:54.085Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "frontend-design": {
+      "name": "frontend-design",
+      "source": "local",
+      "contentHash": "b20162c8d6bcdd9137c4afceaeb4f9dce2c1ba3ccb57a96a3228b8cb33104ec4",
+      "installedAt": "2026-05-30T14:16:53.936Z",
+      "updatedAt": "2026-05-30T14:16:54.091Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "gh-address-comments": {
+      "name": "gh-address-comments",
+      "source": "local",
+      "contentHash": "a1808fb136b7118a7bdac65415e9a40a7982953f8b3339c97087fc0807865d88",
+      "installedAt": "2026-05-30T14:16:53.942Z",
+      "updatedAt": "2026-05-30T14:16:54.095Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "mermaid-studio": {
+      "name": "mermaid-studio",
+      "source": "local",
+      "contentHash": "8a240b980cee9287a20ec6ea1e4837c5d6e43c756ab17fcebbf6b1087a609815",
+      "installedAt": "2026-05-30T14:16:53.959Z",
+      "updatedAt": "2026-05-30T14:16:54.106Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "nestjs-modular-monolith": {
+      "name": "nestjs-modular-monolith",
+      "source": "local",
+      "contentHash": "0bf9fee4b6a151866c38204557b13452feefb315b7d982a36c79125bcc3d076a",
+      "installedAt": "2026-05-30T14:16:53.969Z",
+      "updatedAt": "2026-05-30T14:16:54.112Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "security-best-practices": {
+      "name": "security-best-practices",
+      "source": "local",
+      "contentHash": "6fec09f7e43bb297ad6097e13469e85aa5b5d671a839b4f7e7871ef8eaa76c4e",
+      "installedAt": "2026-05-30T14:16:53.991Z",
+      "updatedAt": "2026-05-30T14:16:54.122Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "security-ownership-map": {
+      "name": "security-ownership-map",
+      "source": "local",
+      "contentHash": "d6231f21029bc14fc776dbef909f631a6b39d7d1b46b11b25dbfe51c51dd7141",
+      "installedAt": "2026-05-30T14:16:53.998Z",
+      "updatedAt": "2026-05-30T14:16:54.129Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "security-threat-model": {
+      "name": "security-threat-model",
+      "source": "local",
+      "contentHash": "9f4cf3c7971c6d84a4657c2c0c395a4c7febbac5a2361950922fc150fcef9599",
+      "installedAt": "2026-05-30T14:16:54.002Z",
+      "updatedAt": "2026-05-30T14:16:54.133Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "shopify-developer": {
+      "name": "shopify-developer",
+      "source": "local",
+      "contentHash": "10dd4806c0061bb9e89914557f6aec6badcef893e601293711ba3e8993527e9f",
+      "installedAt": "2026-05-30T14:16:54.015Z",
+      "updatedAt": "2026-05-30T14:16:54.155Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "skill-architect": {
+      "name": "skill-architect",
+      "source": "local",
+      "contentHash": "349b256153447631c3ed356996c3a62fec52493d07ba75e37b12c458f9fbf6bb",
+      "installedAt": "2026-05-30T14:16:54.023Z",
+      "updatedAt": "2026-05-30T14:16:54.161Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "subagent-creator": {
+      "name": "subagent-creator",
+      "source": "local",
+      "contentHash": "bef6b5a9f23b3186af259c1041c2561e9af15fa94810009d72d775bb217aa3ca",
+      "installedAt": "2026-05-30T14:16:54.027Z",
+      "updatedAt": "2026-05-30T14:16:54.164Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "technical-design-doc-creator": {
+      "name": "technical-design-doc-creator",
+      "source": "local",
+      "contentHash": "d05974df076f695f96b4e4c263ad19f2aaffe8ee6248c1b07a634dd9ed0ea51e",
+      "installedAt": "2026-05-30T14:16:54.032Z",
+      "updatedAt": "2026-05-30T14:16:54.168Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "the-fool": {
+      "name": "the-fool",
+      "source": "local",
+      "contentHash": "b761f983e21e00173ac42760f478095a3e8c733862c20d9f711d10d962f407cc",
+      "installedAt": "2026-05-30T14:16:54.040Z",
+      "updatedAt": "2026-05-30T14:16:54.174Z",
+      "agents": [
+        "github-copilot",
+        "windsurf"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "web-design-guidelines": {
+      "name": "web-design-guidelines",
+      "source": "local",
+      "contentHash": "213a23fff251b12ddfec648bda148bf10704ef6617e162eb9329cc83963dd138",
+      "installedAt": "2026-05-30T14:16:54.044Z",
+      "updatedAt": "2026-05-30T14:16:54.044Z",
+      "agents": [
+        "github-copilot"
+      ],
+      "method": "copy",
+      "global": false
+    }
+  }
+}
