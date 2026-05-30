@@ -47,7 +47,7 @@ api.interceptors.response.use(
         });
 
         localStorage.setItem('accessToken', data.accessToken);
-        
+
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
         }
