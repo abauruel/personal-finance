@@ -1,50 +1,68 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Search, Bell } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { ROUTES } from '../../lib/constants';
 import { getInitials } from '../../lib/utils';
 
 export const Navbar: React.FC = () => {
   const { user, clearAuth } = useAuthStore();
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleLogout = () => {
     clearAuth();
     window.location.href = ROUTES.LOGIN;
   };
 
-  return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link
-            to={ROUTES.DASHBOARD}
-            className="flex items-center space-x-2"
-          >
-            <span className="text-2xl">💰</span>
-            <span className="text-xl font-bold text-gray-900">
-              Personal Finance
-            </span>
-          </Link>
+  const firstName = user?.name.split(' ')[0] || 'User';
 
+  return (
+    <nav className="bg-white border-b border-gray-100 px-8 py-6">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        {/* Greeting Section */}
+        <div className="shrink-0">
+          <h1 className="text-2xl font-bold text-gray-900">
+            Hi, {firstName}! Welcome back.
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">Manage your cards and review recent transactions.</p>
+        </div>
+
+        {/* Search and User Section */}
+        <div className="flex items-center gap-3">
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+            <input
+              type="text"
+              placeholder="Search or type a command"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ paddingLeft: '3rem', paddingRight: '5rem' }}
+              className="w-72 lg:w-96 h-11 text-sm border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white placeholder:text-gray-400 transition-all"
+            />
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">⌘F</span>
+          </div>
+
+          {/* Notifications */}
+          <button className="relative w-11 h-11 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-xl transition-colors flex-shrink-0">
+            <Bell className="w-5 h-5" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+          </button>
+
+          {/* User Profile */}
           {user && (
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
-                  {getInitials(user.name)}
-                </div>
-                <div className="hidden md:block">
-                  <p className="text-sm font-medium text-gray-900">
-                    {user.name}
-                  </p>
-                  <p className="text-xs text-gray-500">{user.email}</p>
-                </div>
+            <div className="relative group flex-shrink-0">
+              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white text-sm font-semibold cursor-pointer">
+                {getInitials(user.name)}
               </div>
-              <button
-                onClick={handleLogout}
-                className="text-sm text-gray-700 hover:text-gray-900"
-              >
-                Sair
-              </button>
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <button
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                >
+                  Sair
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -94,7 +94,8 @@ export interface RecurringTransaction {
   description: string;
   amount: number;
   frequency: RecurringFrequency;
-  dayOfMonth?: number;
+  paymentType: PaymentType;
+  dayOfMonth: number;
   startDate: Date;
   endDate?: Date;
   active: boolean;
@@ -120,3 +121,18 @@ export interface CreateTransactionDto {
 }
 
 export type UpdateTransactionDto = Partial<CreateTransactionDto>;
+
+export interface CreateRecurringDto {
+  categoryId: string;
+  accountId: string;
+  description: string;
+  amount: number;
+  frequency: RecurringFrequency;
+  paymentType?: PaymentType;
+  dayOfMonth: number;
+  startDate: string;
+  endDate?: string;
+  active?: boolean;
+}
+
+export type UpdateRecurringDto = Partial<CreateRecurringDto>;

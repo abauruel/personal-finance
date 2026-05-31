@@ -29,4 +29,14 @@ export interface DashboardStatsDto {
       name: string;
     };
   }>;
+  balanceHistory: Array<{
+    date: string;
+    value: number;
+  }>;
+  cards: Array<{
+    id: string;
+    name: string;
+    type: string;
+    balance: number;
+  }>;
 }

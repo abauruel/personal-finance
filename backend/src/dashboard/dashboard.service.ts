@@ -97,6 +97,22 @@ export class DashboardService {
       },
     }));
 
+    // Balance history (últimos 6 meses)
+    const balanceHistory = this.calculateBalanceHistory(monthlyTrend, totalBalance);
+
+    // Cards (contas do usuário)
+    const cards = await this.prisma.account.findMany({
+      where: { userId },
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        currentBalance: true,
+      },
+      take: 3, // Mostrar apenas 3 cards principais
+      orderBy: { currentBalance: 'desc' },
+    });
+
     return {
       summary: {
         totalBalance,
@@ -106,6 +122,13 @@ export class DashboardService {
       categoryExpenses,
       monthlyTrend,
       recentTransactions,
+      balanceHistory,
+      cards: cards.map((card) => ({
+        id: card.id,
+        name: card.name,
+        type: card.type,
+        balance: card.currentBalance,
+      })),
     };
   }
 
@@ -145,5 +168,28 @@ export class DashboardService {
       income: data.income,
       expenses: data.expenses,
     }));
+  }
+
+  private calculateBalanceHistory(
+    monthlyTrend: Array<{ month: string; income: number; expenses: number }>,
+    currentBalance: number,
+  ): Array<{ date: string; value: number }> {
+    // Começar do saldo atual e voltar no tempo subtraindo o net flow de cada mês
+    const history: Array<{ date: string; value: number }> = [];
+    let runningBalance = currentBalance;
+
+    // Processar do mês mais recente para o mais antigo
+    for (let i = monthlyTrend.length - 1; i >= 0; i--) {
+      const trend = monthlyTrend[i];
+      history.unshift({
+        date: trend.month,
+        value: runningBalance,
+      });
+      // Subtrair o net flow deste mês para obter o saldo do mês anterior
+      const netFlow = trend.income - trend.expenses;
+      runningBalance -= netFlow;
+    }
+
+    return history;
   }
 }

@@ -1,15 +1,104 @@
 @import "tailwindcss";
 
+:root {
+  /* Modern Dashboard Palette - Fireart Studio Inspired */
+  --color-background: #f8f9fc;
+  --color-surface: #ffffff;
+
+  /* Primary Colors - Indigo/Purple Scheme */
+  --color-primary: #6366f1;
+  --color-primary-light: #818cf8;
+  --color-primary-dark: #4f46e5;
+  --color-primary-hover: #4f46e5;
+
+  /* Secondary & Text Colors */
+  --color-secondary: #6b7280;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-tertiary: #9ca3af;
+  --color-border: #e5e7eb;
+
+  /* Status Colors */
+  --color-error: #ef4444;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+
+  /* Card Background Colors */
+  --color-card-default: #ffffff;
+  --color-card-income: #f0fdf4;
+  --color-card-expense: #fef2f2;
+  --color-card-balance: #ffffff;
+
+  /* Neutral Grays */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-600: #4b5563;
+  --color-gray-900: #111827;
+
+  /* Shadows - Soft and Modern */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 2px 8px 0 rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 8px 16px 0 rgb(0 0 0 / 0.06);
+  --shadow-xl: 0 16px 32px 0 rgb(0 0 0 / 0.08);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  /* Spacing System */
+  --spacing-unit: 8px;
+  --card-padding: 24px;
+  --grid-gap: 24px;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-card: 16px;
+}
+
 * {
-  margin: 0;
-  padding: 0;
+  /* margin: 0; */
+  /* padding: 0; */
   box-sizing: border-box;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    "Oxygen",
+    "Ubuntu",
+    "Cantarell",
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  line-height: 1.6;
+}
+
+/* Better Typography Defaults */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+p {
+  line-height: 1.6;
+}
+
+button {
+  line-height: 1.2;
 }

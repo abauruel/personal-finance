@@ -1,5 +1,5 @@
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { ChevronDown } from 'lucide-react';
+import { useState } from 'react';
 
 interface RecentTransactionsProps {
   transactions: Array<{
@@ -18,59 +18,111 @@ interface RecentTransactionsProps {
 }
 
 export function RecentTransactions({ transactions }: RecentTransactionsProps) {
+  const [selectedPeriod] = useState('Today');
+
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'BRL',
-    }).format(value);
+      currency: 'USD',
+      minimumFractionDigits: 0,
+    }).format(Math.abs(value));
   };
 
   if (transactions.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="text-lg font-semibold mb-4">Transações Recentes</h2>
+      <div className="bg-white rounded-2xl shadow-sm p-5">
+        <h2 className="text-lg font-semibold mb-4">Transactions</h2>
         <div className="text-center py-8 text-gray-500">
-          Nenhuma transação registrada
+          No transactions recorded
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <h2 className="text-lg font-semibold mb-4">Transações Recentes</h2>
-      <div className="space-y-3">
-        {transactions.map((transaction) => (
+    <div className="bg-white rounded-2xl shadow-sm p-6">
+      {/* Header with Filters */}
+      <div className="mb-5">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">Transactions</h2>
+
+        <div className="flex gap-3">
+          {/* Period Dropdown */}
+          <button className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+            <span>Period</span>
+            <ChevronDown className="w-4 h-4" />
+          </button>
+
+          {/* Account Dropdown */}
+          <button className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+            <span>Card or account</span>
+            <ChevronDown className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Transactions List */}
+      <div className="space-y-1">
+        {/* Today Section */}
+        <div className="text-xs font-medium text-gray-500 mb-3 mt-1">{selectedPeriod}</div>
+
+        {transactions.slice(0, 3).map((transaction) => (
           <div
             key={transaction.id}
-            className="flex items-center justify-between py-3 border-b last:border-b-0"
+            className="flex items-center justify-between py-3 px-3 hover:bg-gray-50 rounded-lg transition-colors"
           >
             <div className="flex items-center gap-3">
-              <span className="text-2xl">{transaction.category.icon}</span>
+              <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white text-sm">
+                {transaction.category.icon}
+              </div>
               <div>
-                <p className="font-medium text-gray-900">
+                <p className="font-medium text-gray-900 text-sm">
                   {transaction.description}
                 </p>
-                <p className="text-sm text-gray-500">
-                  {transaction.category.name} • {transaction.account.name}
+                <p className="text-xs text-gray-500">
+                  {transaction.category.name}
                 </p>
               </div>
             </div>
-            <div className="text-right">
-              <p
-                className={`font-semibold ${transaction.amount >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}
-              >
-                {formatCurrency(transaction.amount)}
-              </p>
-              <p className="text-sm text-gray-500">
-                {format(new Date(transaction.date), 'dd/MM/yyyy', {
-                  locale: ptBR,
-                })}
-              </p>
-            </div>
+            <p className={`font-semibold text-sm ${transaction.amount >= 0 ? 'text-green-600' : 'text-gray-900'
+              }`}>
+              {transaction.amount >= 0 ? '+' : '-'}{formatCurrency(transaction.amount)}
+            </p>
           </div>
         ))}
+
+        {/* Previous Date Section */}
+        {transactions.length > 3 && (
+          <>
+            <div className="text-xs font-medium text-gray-500 mt-4 mb-2">
+              September 14, Sat
+            </div>
+
+            {transactions.slice(3, 5).map((transaction) => (
+              <div
+                key={transaction.id}
+                className="flex items-center justify-between py-2.5 px-2 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-900 flex items-center justify-center text-white text-sm">
+                    {transaction.category.icon}
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900 text-sm">
+                      {transaction.description}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {transaction.category.name}
+                    </p>
+                  </div>
+                </div>
+                <p className={`font-semibold text-sm ${transaction.amount >= 0 ? 'text-green-600' : 'text-gray-900'
+                  }`}>
+                  {transaction.amount >= 0 ? '+' : '-'}{formatCurrency(transaction.amount)}
+                </p>
+              </div>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );

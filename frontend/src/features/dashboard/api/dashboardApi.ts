@@ -1,5 +1,23 @@
 import api from '../../../lib/api';
 
+export interface CashFlowData {
+  month: string;
+  cashIn: number;
+  cashOut: number;
+}
+
+export interface BalanceHistoryPoint {
+  date: string;
+  value: number;
+}
+
+export interface AccountCard {
+  id: string;
+  name: string;
+  type: string;
+  balance: number;
+}
+
 export interface DashboardStats {
   summary: {
     totalBalance: number;
@@ -30,6 +48,16 @@ export interface DashboardStats {
     account: {
       name: string;
     };
+  }>;
+  balanceHistory: Array<{
+    date: string;
+    value: number;
+  }>;
+  cards: Array<{
+    id: string;
+    name: string;
+    type: string;
+    balance: number;
   }>;
 }
 

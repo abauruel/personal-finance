@@ -30,6 +30,7 @@ export class TransactionsController {
   @Get()
   findAll(
     @GetUser('id') userId: string,
+    @Query('search') search?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
     @Query('categoryId') categoryId?: string,
@@ -38,6 +39,7 @@ export class TransactionsController {
     @Query('paymentType') paymentType?: string,
   ) {
     return this.transactionsService.findAll(userId, {
+      search,
       startDate,
       endDate,
       categoryId,

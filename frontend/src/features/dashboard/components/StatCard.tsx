@@ -1,50 +1,83 @@
-import { ArrowUpRight, ArrowDownRight, Wallet } from 'lucide-react';
+import { ArrowDown, ArrowUp, MoreVertical } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
   value: number;
-  type: 'balance' | 'income' | 'expense';
+  type: 'income' | 'expense';
+  trend?: {
+    value: number;
+    isPositive: boolean;
+  };
+  subtext?: string;
+  onMenuClick?: () => void;
 }
 
-export function StatCard({ title, value, type }: StatCardProps) {
+export function StatCard({ title, value, type, trend, subtext, onMenuClick }: StatCardProps) {
   const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat('pt-BR', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'BRL',
-    }).format(val);
+      currency: 'USD',
+      minimumFractionDigits: 2,
+    }).format(Math.abs(val));
   };
 
-  const getIcon = () => {
-    switch (type) {
-      case 'income':
-        return <ArrowUpRight className="text-green-500" size={24} />;
-      case 'expense':
-        return <ArrowDownRight className="text-red-500" size={24} />;
-      default:
-        return <Wallet className="text-blue-500" size={24} />;
+  const getCardStyle = () => {
+    if (type === 'income') {
+      return {
+        bg: 'bg-white',
+        icon: <ArrowDown className="w-5 h-5 text-green-600" />,
+        iconBg: 'bg-green-50',
+        trendColor: trend?.isPositive ? 'text-green-600' : 'text-red-600',
+      };
     }
+    return {
+      bg: 'bg-white',
+      icon: <ArrowUp className="w-5 h-5 text-red-600" />,
+      iconBg: 'bg-red-50',
+      trendColor: trend?.isPositive ? 'text-red-600' : 'text-green-600',
+    };
   };
 
-  const getColor = () => {
-    switch (type) {
-      case 'income':
-        return 'text-green-600';
-      case 'expense':
-        return 'text-red-600';
-      default:
-        return 'text-blue-600';
-    }
-  };
+  const cardStyle = getCardStyle();
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-gray-600 text-sm">{title}</span>
-        {getIcon()}
+    <div className={`${cardStyle.bg} rounded-2xl p-6 shadow-card hover:shadow-card-hover transition-all`}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className={`${cardStyle.iconBg} p-2 rounded-lg`}>
+          {cardStyle.icon}
+        </div>
+        <button
+          onClick={onMenuClick}
+          className="text-gray-400 hover:text-gray-600 transition-colors"
+          aria-label="More options"
+        >
+          <MoreVertical className="w-5 h-5" />
+        </button>
       </div>
-      <p className={`text-2xl font-bold ${getColor()}`}>
-        {formatCurrency(value)}
-      </p>
+
+      {/* Title */}
+      <h3 className="text-sm font-medium text-gray-600 mb-3">{title}</h3>
+
+      {/* Value */}
+      <p className="text-3xl font-bold text-gray-900 mb-2">{formatCurrency(value)}</p>
+
+      {/* Trend */}
+      {trend && (
+        <div className="flex items-center gap-1 mb-2">
+          {trend.isPositive ? (
+            <ArrowUp className="w-4 h-4 text-green-600" />
+          ) : (
+            <ArrowDown className="w-4 h-4 text-red-600" />
+          )}
+          <span className={`text-sm font-semibold ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+            {trend.value}%
+          </span>
+        </div>
+      )}
+
+      {/* Subtext */}
+      {subtext && <p className="text-sm text-gray-500 mt-2">{subtext}</p>}
     </div>
   );
 }

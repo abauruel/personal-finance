@@ -1,0 +1,626 @@
+◇ injected env (8) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+🚀 Iniciando importação de dados do Excel...
+
+👤 Criando/buscando usuário...
+✅ Usuário: alex@example.com (376bad89-376f-44ca-96fc-5170547b6945)
+
+📄 Lendo arquivo: /Users/alexbauruel/www/sideprojects/personal-finance/setembro22.xlsx
+📊 Abas mensais encontradas: 35
+jan26, nov25, ago25, set25, out25, jul25, jun25, mai25, abr25, jan25, fev25, mar25, set24, jun24, jul24, maio24, abril24, marco24, fevereiro24, janneiro24, Dezembro23, novembro23, outubro23, setembro23, Agosto23, julho23, junho23, maio23, abril23, marco23, fevereiro23, Janeiro23, outubro22, setembro22, novembro22
+
+🔍 Analisando dados para criar contas e categorias...
+  Contas únicas: 3
+  Categorias únicas: 56
+
+🏦 Criando contas...
+  ✓ bradesco conta
+  ✓ santander conta
+  ✓ nubank conta
+✅ 3 contas criadas
+
+📁 Criando categorias...
+  ✓ escola/faculdade
+  ✓ dentista
+  ✓ energia
+  ✓ internet
+  ✓ internet movel
+  ✓ streaming
+  ✓ contabilidade
+  ✓ seguro
+  ✓ cursos
+  ✓ academia
+  ✓ manutenção domiciliar
+  ✓ pix aline
+  ✓ reforma casa
+  ✓ painel solar
+  ✓ lazer
+  ✓ combustivel
+  ✓ feira
+  ✓ cabeleireiro
+  ✓ manutenção casa
+  ✓ padaria
+  ✓ mercado
+  ✓ outros
+  ✓ farmacia
+  ✓ pet
+  ✓ projetos
+  ✓ estacionamentos
+  ✓ manutencao veiculo
+  ✓ ferias
+  ✓ vestuario
+  ✓ material escolar
+  ✓ gift
+  ✓ manutencao veicular
+  ✓ boleto
+  ✓ utilizades domesticas
+  ✓ estacionamento
+  ✓ manutenção  veiculo
+  ✓ beleza
+  ✓ utilidades domesticas
+  ✓ transporte
+  ✓ manutencao casa
+  ✓ familia
+  ✓ iptu
+  ✓ uber
+  ✓ despesas pessoais
+  ✓ vestiario
+  ✓ manutencao de veiculo
+  ✓ cuidados com a casa
+  ✓ presentes do mes
+  ✓ presentes de natal
+  ✓ pedagios
+  ✓ limite de credito
+  ✓ saque
+  ✓ cartao aline
+  ✓ futebol
+  ✓ tarifa bancaria
+  ✓ gas de cozinha
+✅ 56 categorias criadas
+
+💳 Importando transações...
+
+
+📅 Processando: jan26 (1/2026)
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / internet movel
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / streaming
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / internet movel
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / ferias
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ✅ Importadas: 26 | ⚠️ Ignoradas: 140
+
+📅 Processando: nov25 (11/2025)
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / farmacia
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ✅ Importadas: 40 | ⚠️ Ignoradas: 81
+
+📅 Processando: ago25 (8/2025)
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / boleto
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / material escolar
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / manutenção casa
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / manutencao veicular
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ✅ Importadas: 42 | ⚠️ Ignoradas: 79
+
+📅 Processando: set25 (9/2025)
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / boleto
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / material escolar
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / manutenção casa
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / manutencao veicular
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ✅ Importadas: 36 | ⚠️ Ignoradas: 85
+
+📅 Processando: out25 (10/2025)
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / boleto
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / material escolar
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / manutenção casa
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / manutencao veicular
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ✅ Importadas: 38 | ⚠️ Ignoradas: 83
+
+📅 Processando: jul25 (7/2025)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 121
+
+📅 Processando: jun25 (6/2025)
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / cabeleireiro
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / utilizades domesticas
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / utilizades domesticas
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / manutencao veicular
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ⚠️  Conta ou categoria não encontrada: Outros / academia
+  ✅ Importadas: 37 | ⚠️ Ignoradas: 83
+
+📅 Processando: mai25 (5/2025)
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / vestuario
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / material escolar
+  ⚠️  Conta ou categoria não encontrada: Outros / farmacia
+  ⚠️  Conta ou categoria não encontrada: Outros / farmacia
+  ⚠️  Conta ou categoria não encontrada: Outros / material escolar
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / manutenção casa
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / feira
+  ⚠️  Conta ou categoria não encontrada: Outros / cursos
+  ⚠️  Conta ou categoria não encontrada: Outros / cursos
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / projetos
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / internet movel
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / manutencao veiculo
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / manutenção domiciliar
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / manutenção domiciliar
+  ⚠️  Conta ou categoria não encontrada: Outros / padaria
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / utilizades domesticas
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / utilizades domesticas
+  ⚠️  Conta ou categoria não encontrada: Outros / pet
+  ⚠️  Conta ou categoria não encontrada: Outros / farmacia
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / lazer
+  ⚠️  Conta ou categoria não encontrada: Outros / combustivel
+  ⚠️  Conta ou categoria não encontrada: Outros / mercado
+  ⚠️  Conta ou categoria não encontrada: Outros / gift
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ⚠️  Conta ou categoria não encontrada: Outros / pix aline
+  ⚠️  Conta ou categoria não encontrada: Outros / estacionamentos
+  ⚠️  Conta ou categoria não encontrada: Outros / outros
+  ✅ Importadas: 35 | ⚠️ Ignoradas: 86
+
+📅 Processando: abr25 (4/2025)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 107
+
+📅 Processando: jan25 (1/2025)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 105
+
+📅 Processando: fev25 (2/2025)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 106
+
+📅 Processando: mar25 (3/2025)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 102
+
+📅 Processando: set24 (9/2024)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 104
+
+📅 Processando: jun24 (6/2024)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 104
+
+📅 Processando: jul24 (7/2024)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 104
+
+📅 Processando: maio24 (5/2024)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 104
+
+📅 Processando: abril24 (4/2024)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 104
+
+📅 Processando: marco24 (3/2024)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 104
+
+📅 Processando: fevereiro24 (2/2024)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 104
+
+📅 Processando: janneiro24 (1/2024)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 104
+
+📅 Processando: Dezembro23 (12/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 105
+
+📅 Processando: novembro23 (11/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 98
+
+📅 Processando: outubro23 (10/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 98
+
+📅 Processando: setembro23 (9/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 91
+
+📅 Processando: Agosto23 (8/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 94
+
+📅 Processando: julho23 (7/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 114
+
+📅 Processando: junho23 (6/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 90
+
+📅 Processando: maio23 (5/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 70
+
+📅 Processando: abril23 (4/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 65
+
+📅 Processando: marco23 (3/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 91
+
+📅 Processando: fevereiro23 (2/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 69
+
+📅 Processando: Janeiro23 (1/2023)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 33
+
+📅 Processando: outubro22 (10/2022)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 3
+
+📅 Processando: setembro22 (9/2022)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 80
+
+📅 Processando: novembro22 (11/2022)
+  ✅ Importadas: 0 | ⚠️ Ignoradas: 26
+
+==================================================
+
+✨ Importação concluída!
+   Total importado: 254 transações
+   Total ignorado: 3137 linhas
+   Contas criadas: 3
+   Categorias criadas: 56
+
+📧 Credenciais de acesso:
+   Email: alex@example.com
+   Senha: 123456
+
+==================================================

@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import type { CreateTransactionDto, UpdateTransactionDto } from './dto';
 
 interface FindAllFilters {
+  search?: string;
   startDate?: string;
   endDate?: string;
   categoryId?: string;
@@ -17,6 +18,14 @@ export class TransactionsService {
 
   async findAll(userId: string, filters: FindAllFilters = {}) {
     const where: any = { userId };
+
+    // Filtro por busca (descrição ou notes)
+    if (filters.search) {
+      where.OR = [
+        { description: { contains: filters.search, mode: 'insensitive' } },
+        { notes: { contains: filters.search, mode: 'insensitive' } },
+      ];
+    }
 
     // Filtro por intervalo de datas
     if (filters.startDate || filters.endDate) {
