@@ -1,4 +1,5 @@
 import { ArrowDown, ArrowUp, MoreVertical } from 'lucide-react';
+import { useFormatters } from '../../../hooks/useFormatters';
 
 interface StatCardProps {
   title: string;
@@ -13,13 +14,7 @@ interface StatCardProps {
 }
 
 export function StatCard({ title, value, type, trend, subtext, onMenuClick }: StatCardProps) {
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-    }).format(Math.abs(val));
-  };
+  const { formatCurrency } = useFormatters();
 
   const getCardStyle = () => {
     if (type === 'income') {
@@ -60,7 +55,7 @@ export function StatCard({ title, value, type, trend, subtext, onMenuClick }: St
       <h3 className="text-sm font-medium text-gray-600 mb-3">{title}</h3>
 
       {/* Value */}
-      <p className="text-3xl font-bold text-gray-900 mb-2">{formatCurrency(value)}</p>
+      <p className="text-3xl font-bold text-gray-900 mb-2">{formatCurrency(Math.abs(value))}</p>
 
       {/* Trend */}
       {trend && (

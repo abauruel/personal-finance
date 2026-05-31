@@ -1,6 +1,7 @@
 import { ArrowUp, ArrowDown } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import type { BalanceHistoryPoint } from '../api/dashboardApi';
+import { useFormatters } from '../../../hooks/useFormatters';
 
 interface BalanceCardProps {
   balance: number;
@@ -10,13 +11,7 @@ interface BalanceCardProps {
 }
 
 export function BalanceCard({ balance, change, chartData, subtext }: BalanceCardProps) {
-  const formatCurrency = (val: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-    }).format(val);
-  };
+  const { formatCurrency } = useFormatters();
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-card">

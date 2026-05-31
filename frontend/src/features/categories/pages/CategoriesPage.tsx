@@ -46,7 +46,7 @@ const CategoriesPage = () => {
 
   const handleDelete = async (id: string) => {
     const category = categories.find(c => c.id === id);
-    
+
     if (category?.isDefault) {
       toast.error('Não é possível deletar categorias padrão');
       return;
@@ -131,7 +131,7 @@ const CategoriesPage = () => {
             {customCategories.length > 0 ? 'Todas as Categorias' : 'Comece criando sua primeira categoria'}
           </h2>
           <p className="text-gray-500 mt-1">
-            {customCategories.length > 0 
+            {customCategories.length > 0
               ? 'Categorias padrão não podem ser editadas ou excluídas'
               : 'Organize suas transações criando categorias personalizadas'
             }

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Search, Bell } from 'lucide-react';
+import { Search, Bell, Settings } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { ROUTES } from '../../lib/constants';
 import { getInitials } from '../../lib/utils';
+import { SettingsModal } from '../ui/SettingsModal';
 
 export const Navbar: React.FC = () => {
   const { user, clearAuth } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const handleLogout = () => {
     clearAuth();
@@ -43,9 +45,18 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Notifications */}
-          <button className="relative w-11 h-11 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-xl transition-colors flex-shrink-0">
+          <button className="relative w-11 h-11 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-xl transition-colors shrink-0">
             <Bell className="w-5 h-5" />
             <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+          </button>
+
+          {/* Settings */}
+          <button
+            onClick={() => setIsSettingsOpen(true)}
+            className="w-11 h-11 flex items-center justify-center text-gray-600 hover:bg-gray-50 rounded-xl transition-colors shrink-0"
+            title="Configurações"
+          >
+            <Settings className="w-5 h-5" />
           </button>
 
           {/* User Profile */}
@@ -67,6 +78,9 @@ export const Navbar: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Settings Modal */}
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
     </nav>
   );
 };

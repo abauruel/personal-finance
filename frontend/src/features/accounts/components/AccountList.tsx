@@ -1,5 +1,6 @@
 import { Edit2, Trash2, Wallet, TrendingUp, TrendingDown } from 'lucide-react';
 import type { Account } from '../../../types/models.types';
+import { useFormatters } from '../../../hooks/useFormatters';
 
 interface AccountListProps {
   accounts: Account[];
@@ -14,6 +15,8 @@ export function AccountList({
   onDelete,
   isLoading,
 }: AccountListProps) {
+  const { formatCurrency } = useFormatters();
+
   const getAccountTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
       CHECKING: 'Conta Corrente',
@@ -47,13 +50,6 @@ export function AccountList({
       default:
         return '💰';
     }
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
   };
 
   if (isLoading) {

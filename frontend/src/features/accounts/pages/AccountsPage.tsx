@@ -5,9 +5,11 @@ import { Button } from '../../../components/ui/Button';
 import { AccountModal } from '../components/AccountModal';
 import { AccountList } from '../components/AccountList';
 import { useAccounts } from '../hooks/useAccounts';
+import { useFormatters } from '../../../hooks/useFormatters';
 import type { Account } from '../../../types/models.types';
 
 const AccountsPage = () => {
+  const { formatCurrency } = useFormatters();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
 
@@ -86,12 +88,6 @@ const AccountsPage = () => {
   const balanceChangePercent =
     totalInitial !== 0 ? (balanceChange / totalInitial) * 100 : 0;
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
-  };
 
   return (
     <div className="space-y-6">

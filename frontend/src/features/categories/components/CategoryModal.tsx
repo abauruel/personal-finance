@@ -36,7 +36,7 @@ const PRESET_COLORS = [
 ];
 
 const COMMON_ICONS = [
-  '🍔', '🍕', '🍜', '☕', '🛒', '🏠', '🚗', '⚡', 
+  '🍔', '🍕', '🍜', '☕', '🛒', '🏠', '🚗', '⚡',
   '💳', '💰', '🎮', '📱', '👕', '🎓', '🏥', '✈️',
   '🎬', '🎵', '🏋️', '🎨', '📚', '🐕', '🌳', '🎁',
 ];
@@ -159,16 +159,15 @@ export const CategoryModal = ({ isOpen, onClose, onSubmit, category, isLoading }
                     {errors.icon && (
                       <p className="mt-2 text-sm text-red-600">{errors.icon.message}</p>
                     )}
-                    
+
                     <div className="mt-3 flex flex-wrap gap-2">
                       {COMMON_ICONS.map((icon) => (
                         <button
                           key={icon}
                           type="button"
                           onClick={() => setValue('icon', icon)}
-                          className={`text-2xl w-12 h-12 rounded-lg hover:bg-gray-100 transition-colors ${
-                            selectedIcon === icon ? 'bg-primary/10 ring-2 ring-primary' : ''
-                          }`}
+                          className={`text-2xl w-12 h-12 rounded-lg hover:bg-gray-100 transition-colors ${selectedIcon === icon ? 'bg-primary/10 ring-2 ring-primary' : ''
+                            }`}
                         >
                           {icon}
                         </button>
@@ -187,11 +186,10 @@ export const CategoryModal = ({ isOpen, onClose, onSubmit, category, isLoading }
                           key={color.value}
                           type="button"
                           onClick={() => setValue('color', color.value)}
-                          className={`w-12 h-12 rounded-lg transition-all ${
-                            selectedColor === color.value
+                          className={`w-12 h-12 rounded-lg transition-all ${selectedColor === color.value
                               ? 'ring-4 ring-offset-2 ring-primary scale-110'
                               : 'hover:scale-105'
-                          }`}
+                            }`}
                           style={{ backgroundColor: color.value }}
                           title={color.name}
                         />
