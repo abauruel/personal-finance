@@ -18,7 +18,7 @@ import { GetUser } from '../auth/decorators/get-user.decorator';
 @Controller('categories')
 @UseGuards(JwtAuthGuard)
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(private readonly categoriesService: CategoriesService) { }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

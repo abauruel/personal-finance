@@ -13,7 +13,7 @@ interface FindAllFilters {
 
 @Injectable()
 export class TransactionsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findAll(userId: string, filters: FindAllFilters = {}) {
     const where: any = { userId };

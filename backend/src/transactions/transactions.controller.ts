@@ -19,7 +19,7 @@ import { GetUser } from '../auth/decorators/get-user.decorator';
 @Controller('transactions')
 @UseGuards(JwtAuthGuard)
 export class TransactionsController {
-  constructor(private readonly transactionsService: TransactionsService) {}
+  constructor(private readonly transactionsService: TransactionsService) { }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)

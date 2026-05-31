@@ -1,9 +1,9 @@
-import { 
-  IsEnum, 
-  IsNotEmpty, 
-  IsNumber, 
-  IsOptional, 
-  IsString, 
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
   IsDateString,
   IsBoolean,
   Min

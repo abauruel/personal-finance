@@ -4,7 +4,7 @@ import type { CreateCategoryDto, UpdateCategoryDto } from './dto';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findAll(userId: string) {
     return this.prisma.category.findMany({

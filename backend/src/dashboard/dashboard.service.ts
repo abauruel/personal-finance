@@ -4,7 +4,7 @@ import type { DashboardStatsDto } from './dto/dashboard-stats.dto';
 
 @Injectable()
 export class DashboardService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async getStats(userId: string): Promise<DashboardStatsDto> {
     // Buscar todas as contas do usuário

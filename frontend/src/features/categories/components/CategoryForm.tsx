@@ -50,14 +50,14 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false }
     resolver: zodResolver(categorySchema),
     defaultValues: category
       ? {
-          name: category.name,
-          icon: category.icon,
-          color: category.color,
-        }
+        name: category.name,
+        icon: category.icon,
+        color: category.color,
+      }
       : {
-          icon: '💰',
-          color: '#3B82F6',
-        },
+        icon: '💰',
+        color: '#3B82F6',
+      },
   });
 
   const selectedIcon = watch('icon');
@@ -97,9 +97,8 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false }
               key={icon}
               type="button"
               onClick={() => setValue('icon', icon)}
-              className={`p-2 rounded-lg hover:bg-gray-100 transition-colors text-xl ${
-                selectedIcon === icon ? 'bg-blue-100 ring-2 ring-blue-500' : ''
-              }`}
+              className={`p-2 rounded-lg hover:bg-gray-100 transition-colors text-xl ${selectedIcon === icon ? 'bg-blue-100 ring-2 ring-blue-500' : ''
+                }`}
             >
               {icon}
             </button>
@@ -121,9 +120,8 @@ export function CategoryForm({ category, onSubmit, onCancel, isLoading = false }
               key={color}
               type="button"
               onClick={() => setValue('color', color)}
-              className={`w-8 h-8 rounded-lg transition-all ${
-                selectedColor === color ? 'ring-2 ring-offset-2 ring-gray-900' : ''
-              }`}
+              className={`w-8 h-8 rounded-lg transition-all ${selectedColor === color ? 'ring-2 ring-offset-2 ring-gray-900' : ''
+                }`}
               style={{ backgroundColor: color }}
             />
           ))}

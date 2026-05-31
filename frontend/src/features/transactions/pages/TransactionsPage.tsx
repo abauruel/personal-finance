@@ -287,11 +287,10 @@ const TransactionsPage = () => {
                       {getPaymentTypeLabel(transaction.paymentType)}
                     </td>
                     <td
-                      className={`px-6 py-4 whitespace-nowrap text-sm text-right font-medium ${
-                        transaction.amount >= 0
+                      className={`px-6 py-4 whitespace-nowrap text-sm text-right font-medium ${transaction.amount >= 0
                           ? 'text-green-600'
                           : 'text-red-600'
-                      }`}
+                        }`}
                     >
                       {formatCurrency(transaction.amount)}
                     </td>

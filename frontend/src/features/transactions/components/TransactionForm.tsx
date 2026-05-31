@@ -75,23 +75,23 @@ export function TransactionForm({
     resolver: zodResolver(transactionSchema),
     defaultValues: transaction
       ? {
-          accountId: transaction.accountId,
-          categoryId: transaction.categoryId,
-          date: new Date(transaction.date).toISOString().split('T')[0],
-          amount: transaction.amount,
-          description: transaction.description,
-          paymentType: transaction.paymentType,
-          status: transaction.status,
-          notes: transaction.notes || '',
-          isRecurring: transaction.isRecurring,
-          recurringId: transaction.recurringId || '',
-        }
+        accountId: transaction.accountId,
+        categoryId: transaction.categoryId,
+        date: new Date(transaction.date).toISOString().split('T')[0],
+        amount: transaction.amount,
+        description: transaction.description,
+        paymentType: transaction.paymentType,
+        status: transaction.status,
+        notes: transaction.notes || '',
+        isRecurring: transaction.isRecurring,
+        recurringId: transaction.recurringId || '',
+      }
       : {
-          date: new Date().toISOString().split('T')[0],
-          status: 'PENDING',
-          paymentType: 'DEBIT',
-          isRecurring: false,
-        },
+        date: new Date().toISOString().split('T')[0],
+        status: 'PENDING',
+        paymentType: 'DEBIT',
+        isRecurring: false,
+      },
   });
 
   useEffect(() => {
