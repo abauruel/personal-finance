@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  Request,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -16,6 +15,7 @@ import { RecurringJobService } from './recurring-job.service';
 import { CreateRecurringDto } from './dto/create-recurring.dto';
 import { UpdateRecurringDto } from './dto/update-recurring.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 
 @Controller('recurring')
 @UseGuards(JwtAuthGuard)
@@ -26,44 +26,44 @@ export class RecurringController {
   ) { }
 
   @Post()
-  async create(@Request() req, @Body() createRecurringDto: CreateRecurringDto) {
-    return this.recurringService.create(req.user.userId, createRecurringDto);
+  async create(@GetUser('id') userId: string, @Body() createRecurringDto: CreateRecurringDto) {
+    return this.recurringService.create(userId, createRecurringDto);
   }
 
   @Get()
-  async findAll(@Request() req) {
-    return this.recurringService.findAll(req.user.userId);
+  async findAll(@GetUser('id') userId: string) {
+    return this.recurringService.findAll(userId);
   }
 
   @Get(':id')
-  async findOne(@Request() req, @Param('id') id: string) {
-    return this.recurringService.findOne(req.user.userId, id);
+  async findOne(@GetUser('id') userId: string, @Param('id') id: string) {
+    return this.recurringService.findOne(userId, id);
   }
 
   @Patch(':id')
   async update(
-    @Request() req,
+    @GetUser('id') userId: string,
     @Param('id') id: string,
     @Body() updateRecurringDto: UpdateRecurringDto,
   ) {
-    return this.recurringService.update(req.user.userId, id, updateRecurringDto);
+    return this.recurringService.update(userId, id, updateRecurringDto);
   }
 
   @Patch(':id/toggle')
-  async toggleActive(@Request() req, @Param('id') id: string) {
-    return this.recurringService.toggleActive(req.user.userId, id);
+  async toggleActive(@GetUser('id') userId: string, @Param('id') id: string) {
+    return this.recurringService.toggleActive(userId, id);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Request() req, @Param('id') id: string) {
-    await this.recurringService.remove(req.user.userId, id);
+  async remove(@GetUser('id') userId: string, @Param('id') id: string) {
+    await this.recurringService.remove(userId, id);
   }
 
   @Delete(':id/hard')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async hardDelete(@Request() req, @Param('id') id: string) {
-    await this.recurringService.hardDelete(req.user.userId, id);
+  async hardDelete(@GetUser('id') userId: string, @Param('id') id: string) {
+    await this.recurringService.hardDelete(userId, id);
   }
 
   /**
