@@ -11,9 +11,16 @@ import { TransactionFilterModal, type FilterOptions } from '../components/Transa
 import { DashboardSkeleton } from '../../../components/common/Skeletons';
 import { ErrorState } from '../../../components/common/ErrorState';
 import type { ActionType } from '../components/QuickActionButtons';
+import { ROUTES } from '../../../lib/constants';
+import { useSettings } from '../../../contexts/SettingsContext';
+import { useFormatters } from '../../../hooks/useFormatters';
+import { getDashboardMessages, getDashboardMonthLabel } from '../lib/dashboardLocale';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
+  const { settings } = useSettings();
+  const { formatCurrency } = useFormatters();
+  const messages = getDashboardMessages(settings.locale);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [activeFilters, setActiveFilters] = useState<FilterOptions | null>(null);
 
@@ -29,8 +36,8 @@ const DashboardPage = () => {
   if (isError || !stats) {
     return (
       <ErrorState
-        title="Failed to load dashboard"
-        message="We couldn't load your dashboard data. Please check your connection and try again."
+        title={messages.dashboardLoadErrorTitle}
+        message={messages.dashboardLoadErrorMessage}
         onRetry={() => refetch()}
       />
     );
@@ -38,12 +45,8 @@ const DashboardPage = () => {
 
   // Transform monthlyTrend to cashFlow format
   const cashFlowData: CashFlowData[] = stats.monthlyTrend.map((trend) => {
-    const [, month] = trend.month.split('-');
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const monthName = monthNames[parseInt(month) - 1];
-
     return {
-      month: monthName,
+      month: getDashboardMonthLabel(trend.month, settings.locale),
       cashIn: trend.income,
       cashOut: trend.expenses,
     };
@@ -82,30 +85,43 @@ const DashboardPage = () => {
   const balanceDiff = currentNetFlow - previousNetFlow;
 
   const incomeSubtext = incomeDiff > 0
-    ? `You made an extra ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(incomeDiff)} this month`
+    ? messages.incomeExtraThisMonth(formatCurrency(incomeDiff))
     : incomeDiff < 0
-      ? `You made ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Math.abs(incomeDiff))} less this month`
-      : `Same as last month`;
+      ? messages.incomeLessThisMonth(formatCurrency(Math.abs(incomeDiff)))
+      : messages.sameAsLastMonth;
 
   const expenseSubtext = expenseDiff > 0
-    ? `You spent ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(expenseDiff)} more this month`
+    ? messages.expenseMoreThisMonth(formatCurrency(expenseDiff))
     : expenseDiff < 0
-      ? `You saved ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Math.abs(expenseDiff))} this month`
-      : `Same as last month`;
+      ? messages.expenseSavedThisMonth(formatCurrency(Math.abs(expenseDiff)))
+      : messages.sameAsLastMonth;
 
   const balanceSubtext = balanceDiff > 0
-    ? `Your balance increased by ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(balanceDiff)}`
+    ? messages.balanceIncreasedBy(formatCurrency(balanceDiff))
     : balanceDiff < 0
-      ? `Your balance decreased by ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Math.abs(balanceDiff))}`
-      : `No change from last month`;
+      ? messages.balanceDecreasedBy(formatCurrency(Math.abs(balanceDiff)))
+      : messages.noChangeFromLastMonth;
 
   const handleCardAction = (action: ActionType) => {
-    console.log(`Action: ${action}`);
-    // TODO: Implement actions
+    switch (action) {
+      case 'convert':
+        navigate(ROUTES.REPORTS);
+        break;
+      case 'send':
+        navigate(`${ROUTES.TRANSACTIONS}?paymentType=TRANSFER`);
+        break;
+      case 'receive':
+        navigate(`${ROUTES.TRANSACTIONS}?status=PAID`);
+        break;
+      case 'more':
+      default:
+        navigate(ROUTES.TRANSACTIONS);
+        break;
+    }
   };
 
   const handleAddAccount = () => {
-    navigate('/accounts');
+    navigate(ROUTES.ACCOUNTS);
   };
 
   const handleFilter = () => {
@@ -114,8 +130,19 @@ const DashboardPage = () => {
 
   const handleApplyFilters = (filters: FilterOptions) => {
     setActiveFilters(filters);
-    console.log('Filters applied:', filters);
-    // TODO: Implement actual filtering logic with backend
+
+    const params = new URLSearchParams();
+    if (filters.dateRange.from) params.set('startDate', filters.dateRange.from);
+    if (filters.dateRange.to) params.set('endDate', filters.dateRange.to);
+    if (filters.status.length > 0) {
+      const normalizedStatus = filters.status[0].toUpperCase();
+      if (['PENDING', 'PAID', 'CANCELLED'].includes(normalizedStatus)) {
+        params.set('status', normalizedStatus);
+      }
+    }
+
+    const query = params.toString();
+    navigate(`${ROUTES.TRANSACTIONS}${query ? `?${query}` : ''}`);
   };
 
   return (
@@ -123,14 +150,14 @@ const DashboardPage = () => {
       {/* Summary Cards - 3 cards in top row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
-          title="Income"
+          title={messages.income}
           value={stats.summary.totalIncome}
           type="income"
           trend={incomeTrend}
           subtext={incomeSubtext}
         />
         <StatCard
-          title="Expense"
+          title={messages.expense}
           value={stats.summary.totalExpenses}
           type="expense"
           trend={expenseTrend}

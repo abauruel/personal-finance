@@ -6,6 +6,7 @@ import type {
 } from '../../../types/models.types';
 
 interface TransactionFilters {
+  search?: string;
   startDate?: string;
   endDate?: string;
   categoryId?: string;
@@ -17,6 +18,7 @@ interface TransactionFilters {
 export const transactionsApi = {
   getAll: async (filters?: TransactionFilters): Promise<Transaction[]> => {
     const params = new URLSearchParams();
+    if (filters?.search) params.append('search', filters.search);
     if (filters?.startDate) params.append('startDate', filters.startDate);
     if (filters?.endDate) params.append('endDate', filters.endDate);
     if (filters?.categoryId) params.append('categoryId', filters.categoryId);

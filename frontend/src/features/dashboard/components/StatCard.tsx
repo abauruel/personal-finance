@@ -14,7 +14,7 @@ interface StatCardProps {
 }
 
 export function StatCard({ title, value, type, trend, subtext, onMenuClick }: StatCardProps) {
-  const { formatCurrency } = useFormatters();
+  const { formatCurrency, formatPercent } = useFormatters();
 
   const getCardStyle = () => {
     if (type === 'income') {
@@ -66,7 +66,7 @@ export function StatCard({ title, value, type, trend, subtext, onMenuClick }: St
             <ArrowDown className="w-4 h-4 text-red-600" />
           )}
           <span className={`text-sm font-semibold ${trend.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-            {trend.value}%
+            {formatPercent(trend.value, { minimumFractionDigits: 0, maximumFractionDigits: 1 })}
           </span>
         </div>
       )}

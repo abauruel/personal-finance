@@ -4,9 +4,12 @@ import { useAuthStore } from '../../store/authStore';
 import { ROUTES } from '../../lib/constants';
 import { getInitials } from '../../lib/utils';
 import { SettingsModal } from '../ui/SettingsModal';
+import { useSettings } from '../../contexts/SettingsContext';
+import { getNavbarMessages } from '../../lib/featureLocale';
 
 export const Navbar: React.FC = () => {
   const { user, clearAuth } = useAuthStore();
+  const { settings } = useSettings();
   const [searchQuery, setSearchQuery] = useState('');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
@@ -16,6 +19,7 @@ export const Navbar: React.FC = () => {
   };
 
   const firstName = user?.name.split(' ')[0] || 'User';
+  const messages = getNavbarMessages(settings.locale);
 
   return (
     <nav className="bg-white border-b border-gray-100 px-8 py-6">
@@ -23,9 +27,9 @@ export const Navbar: React.FC = () => {
         {/* Greeting Section */}
         <div className="shrink-0">
           <h1 className="text-2xl font-bold text-gray-900">
-            Hi, {firstName}! Welcome back.
+            {messages.greeting(firstName)}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Manage your cards and review recent transactions.</p>
+          <p className="text-sm text-gray-500 mt-1">{messages.subtitle}</p>
         </div>
 
         {/* Search and User Section */}
@@ -35,7 +39,7 @@ export const Navbar: React.FC = () => {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Search or type a command"
+              placeholder={messages.searchPlaceholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{ paddingLeft: '3rem', paddingRight: '5rem' }}

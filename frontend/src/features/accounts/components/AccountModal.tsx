@@ -5,14 +5,17 @@ import { z } from 'zod';
 import { X } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 import type { Account } from '../../../types/models.types';
+import { useSettings } from '../../../contexts/SettingsContext';
+import { CURRENCIES } from '../../../types/settings.types';
+import { getAccountMessages, getAccountTypeLabel } from '../../../lib/featureLocale';
 
-const accountSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório'),
+const buildAccountSchema = (nameRequired: string) => z.object({
+  name: z.string().min(1, nameRequired),
   type: z.enum(['CHECKING', 'SAVINGS', 'CREDIT_CARD']),
   initialBalance: z.number().optional(),
 });
 
-type AccountFormData = z.infer<typeof accountSchema>;
+type AccountFormData = z.infer<ReturnType<typeof buildAccountSchema>>;
 
 interface AccountModalProps {
   isOpen: boolean;
@@ -22,12 +25,6 @@ interface AccountModalProps {
   isLoading?: boolean;
 }
 
-const ACCOUNT_TYPES = [
-  { value: 'CHECKING', label: 'Conta Corrente', icon: '💳' },
-  { value: 'SAVINGS', label: 'Poupança', icon: '🏦' },
-  { value: 'CREDIT_CARD', label: 'Cartão de Crédito', icon: '💳' },
-];
-
 export function AccountModal({
   isOpen,
   onClose,
@@ -35,6 +32,11 @@ export function AccountModal({
   account,
   isLoading,
 }: AccountModalProps) {
+  const { settings } = useSettings();
+  const messages = getAccountMessages(settings.locale);
+  const currencySymbol = CURRENCIES[settings.currency].symbol;
+  const accountSchema = buildAccountSchema(messages.modal.validation.nameRequired);
+
   const {
     register,
     handleSubmit,
@@ -82,7 +84,7 @@ export function AccountModal({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">
-            {account ? 'Editar Conta' : 'Nova Conta'}
+            {account ? messages.modal.editTitle : messages.modal.createTitle}
           </h2>
           <button
             onClick={onClose}
@@ -97,12 +99,12 @@ export function AccountModal({
           {/* Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Nome da Conta *
+              {messages.modal.accountName}
             </label>
             <input
               type="text"
               {...register('name')}
-              placeholder="Ex: Banco do Brasil"
+              placeholder={messages.modal.accountNamePlaceholder}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
             />
             {errors.name && (
@@ -113,15 +115,15 @@ export function AccountModal({
           {/* Type */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Tipo de Conta *
+              {messages.modal.accountType}
             </label>
             <select
               {...register('type')}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
             >
-              {ACCOUNT_TYPES.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.icon} {type.label}
+              {['CHECKING', 'SAVINGS', 'CREDIT_CARD'].map((type) => (
+                <option key={type} value={type}>
+                  {getAccountTypeLabel(type, settings.locale)}
                 </option>
               ))}
             </select>
@@ -133,17 +135,17 @@ export function AccountModal({
           {/* Initial Balance */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              Saldo Inicial
+              {messages.modal.initialBalance}
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                R$
+                {currencySymbol}
               </span>
               <input
                 type="number"
                 step="0.01"
                 {...register('initialBalance', { valueAsNumber: true })}
-                placeholder="0,00"
+                placeholder={messages.modal.initialBalancePlaceholder}
                 className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
               />
             </div>
@@ -154,8 +156,8 @@ export function AccountModal({
             )}
             <p className="text-xs text-gray-500 mt-1.5">
               {account
-                ? 'Este valor não afetará o saldo atual'
-                : 'O saldo inicial será o saldo atual da conta'}
+                ? messages.modal.editHint
+                : messages.modal.createHint}
             </p>
           </div>
 
@@ -168,10 +170,10 @@ export function AccountModal({
               className="flex-1"
               disabled={isLoading}
             >
-              Cancelar
+              {messages.modal.cancel}
             </Button>
             <Button type="submit" className="flex-1" disabled={isLoading}>
-              {isLoading ? 'Salvando...' : account ? 'Atualizar' : 'Criar'}
+              {isLoading ? messages.modal.saving : account ? messages.modal.update : messages.modal.create}
             </Button>
           </div>
         </form>

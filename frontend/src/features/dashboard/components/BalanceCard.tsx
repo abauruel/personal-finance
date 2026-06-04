@@ -2,6 +2,8 @@ import { ArrowUp, ArrowDown } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import type { BalanceHistoryPoint } from '../api/dashboardApi';
 import { useFormatters } from '../../../hooks/useFormatters';
+import { useSettings } from '../../../contexts/SettingsContext';
+import { getDashboardMessages } from '../lib/dashboardLocale';
 
 interface BalanceCardProps {
   balance: number;
@@ -11,12 +13,14 @@ interface BalanceCardProps {
 }
 
 export function BalanceCard({ balance, change, chartData, subtext }: BalanceCardProps) {
-  const { formatCurrency } = useFormatters();
+  const { settings } = useSettings();
+  const { formatCurrency, formatPercent } = useFormatters();
+  const messages = getDashboardMessages(settings.locale);
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-card">
       {/* Title */}
-      <h3 className="text-sm font-medium text-gray-600 mb-4">My Balance</h3>
+      <h3 className="text-sm font-medium text-gray-600 mb-4">{messages.myBalance}</h3>
 
       {/* Balance Value */}
       <div className="mb-4">
@@ -29,7 +33,7 @@ export function BalanceCard({ balance, change, chartData, subtext }: BalanceCard
               <ArrowDown className="w-5 h-5 text-red-600" />
             )}
             <span className={`text-sm font-semibold ${change.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-              {change.value}%
+              {formatPercent(change.value, { minimumFractionDigits: 0, maximumFractionDigits: 1 })}
             </span>
           </div>
         )}
@@ -55,7 +59,7 @@ export function BalanceCard({ balance, change, chartData, subtext }: BalanceCard
           </ResponsiveContainer>
         ) : (
           <div className="h-full bg-gray-50 rounded-lg flex items-center justify-center">
-            <p className="text-xs text-gray-400">No chart data available</p>
+            <p className="text-xs text-gray-400">{messages.noChartData}</p>
           </div>
         )}
       </div>

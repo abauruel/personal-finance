@@ -2,25 +2,39 @@
 
 ## ✅ Status Atual
 
-### Backend (100% Implementado)
+### Backend (Core Implementado)
 - ✅ Autenticação JWT completa
 - ✅ CRUD de Contas (Accounts)
 - ✅ CRUD de Categorias (Categories)
-- ✅ 14 endpoints REST implementados
+- ✅ CRUD de Transações
+- ✅ Dashboard endpoint
+- ✅ Recorrências com geração manual e agendada
 - ✅ Validação com class-validator
 - ✅ Guards e estratégias Passport
 - ✅ CORS configurado
 - ✅ Database PostgreSQL com Prisma
 
-### Frontend (100% Implementado)
+### Frontend (Core Implementado)
 - ✅ Formulários de login e registro
 - ✅ CRUD completo de contas bancárias
 - ✅ CRUD completo de categorias
+- ✅ CRUD completo de transações
+- ✅ Dashboard com cards, gráfico e transações recentes
+- ✅ Tela de recorrências com CRUD e geração manual
 - ✅ Validação com React Hook Form + Zod
 - ✅ Integração com authStore (Zustand)
 - ✅ Feedback visual com toasts (Sonner)
 - ✅ Interceptors para refresh token
 - ✅ Rotas protegidas
+
+### Em desenvolvimento
+- 🟡 Relatórios (tela base pronta, conteúdo pendente)
+- 🟡 Ações rápidas/filtro avançado no dashboard
+- 🟡 Dark mode do sidebar
+
+### Cobertura automatizada atual
+- ✅ Backend: unit, e2e e coverage disponíveis via Jest
+- 🔴 Frontend: sem suíte de testes automatizados configurada no package.json
 
 ---
 
@@ -52,6 +66,13 @@ npm run dev
 ```
 
 **Esperado**: Aplicação rodando em `http://localhost:5173`
+
+Para validar compilação do frontend:
+```bash
+cd frontend
+npm run lint
+npm run build
+```
 
 ### 3. Verificar Database
 

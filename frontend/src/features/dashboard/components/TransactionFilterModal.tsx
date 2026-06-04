@@ -1,6 +1,8 @@
 import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { X, Calendar } from 'lucide-react';
+import { useSettings } from '../../../contexts/SettingsContext';
+import { getDashboardFilterStatuses, getDashboardMessages } from '../lib/dashboardLocale';
 
 export interface FilterOptions {
   dateRange: {
@@ -23,32 +25,15 @@ interface TransactionFilterModalProps {
   initialFilters?: Partial<FilterOptions>;
 }
 
-const MOCK_CATEGORIES = [
-  'Food & Dining',
-  'Shopping',
-  'Transportation',
-  'Bills & Utilities',
-  'Entertainment',
-  'Healthcare',
-  'Travel',
-  'Other'
-];
-
-const MOCK_ACCOUNTS = [
-  'Checking Account',
-  'Savings Account',
-  'Credit Card',
-  'Investment Account'
-];
-
-const STATUS_OPTIONS = ['success', 'pending', 'failed'];
-
 export function TransactionFilterModal({
   isOpen,
   onClose,
   onApply,
   initialFilters
 }: TransactionFilterModalProps) {
+  const { settings } = useSettings();
+  const messages = getDashboardMessages(settings.locale);
+  const statusOptions = getDashboardFilterStatuses(settings.locale);
   const [filters, setFilters] = useState<FilterOptions>({
     dateRange: { from: '', to: '' },
     categories: [],
@@ -130,7 +115,7 @@ export function TransactionFilterModal({
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                   <Dialog.Title className="text-xl font-semibold text-gray-900">
-                    Advanced Filters
+                    {messages.filterModal.title}
                   </Dialog.Title>
                   <button
                     onClick={onClose}
@@ -145,7 +130,7 @@ export function TransactionFilterModal({
                   {/* Date Range */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Date Range
+                      {messages.filterModal.dateRange}
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="relative">
@@ -178,16 +163,16 @@ export function TransactionFilterModal({
                   {/* Categories */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Categories
+                      {messages.filterModal.categories}
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {MOCK_CATEGORIES.map((category) => (
+                      {messages.filterModal.categoriesOptions.map((category) => (
                         <button
                           key={category}
                           onClick={() => toggleCategory(category)}
                           className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${filters.categories.includes(category)
-                              ? 'bg-primary text-white'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-primary text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                         >
                           {category}
@@ -199,16 +184,16 @@ export function TransactionFilterModal({
                   {/* Accounts */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Accounts
+                      {messages.filterModal.accounts}
                     </label>
                     <div className="flex flex-wrap gap-2">
-                      {MOCK_ACCOUNTS.map((account) => (
+                      {messages.filterModal.accountOptions.map((account) => (
                         <button
                           key={account}
                           onClick={() => toggleAccount(account)}
                           className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${filters.accounts.includes(account)
-                              ? 'bg-primary text-white'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-primary text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                         >
                           {account}
@@ -220,11 +205,11 @@ export function TransactionFilterModal({
                   {/* Amount Range */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Amount Range
+                      {messages.filterModal.amountRange}
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs text-gray-500 mb-1">Min</label>
+                        <label className="block text-xs text-gray-500 mb-1">{messages.filterModal.min}</label>
                         <input
                           type="number"
                           value={filters.amountRange.min}
@@ -237,7 +222,7 @@ export function TransactionFilterModal({
                         />
                       </div>
                       <div>
-                        <label className="block text-xs text-gray-500 mb-1">Max</label>
+                        <label className="block text-xs text-gray-500 mb-1">{messages.filterModal.max}</label>
                         <input
                           type="number"
                           value={filters.amountRange.max}
@@ -255,19 +240,19 @@ export function TransactionFilterModal({
                   {/* Status */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Status
+                      {messages.filterModal.status}
                     </label>
                     <div className="flex gap-2">
-                      {STATUS_OPTIONS.map((status) => (
+                      {statusOptions.map(({ value, label }) => (
                         <button
-                          key={status}
-                          onClick={() => toggleStatus(status)}
-                          className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-all ${filters.status.includes(status)
-                              ? 'bg-primary text-white'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          key={value}
+                          onClick={() => toggleStatus(value)}
+                          className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${filters.status.includes(value)
+                            ? 'bg-primary text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                         >
-                          {status}
+                          {label}
                         </button>
                       ))}
                     </div>
@@ -280,19 +265,19 @@ export function TransactionFilterModal({
                     onClick={handleReset}
                     className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                   >
-                    Reset
+                    {messages.filterModal.reset}
                   </button>
                   <button
                     onClick={onClose}
                     className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                   >
-                    Cancel
+                    {messages.filterModal.cancel}
                   </button>
                   <button
                     onClick={handleApply}
                     className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-lg transition-colors"
                   >
-                    Apply Filters
+                    {messages.filterModal.applyFilters}
                   </button>
                 </div>
               </Dialog.Panel>

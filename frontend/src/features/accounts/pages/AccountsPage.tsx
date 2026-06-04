@@ -7,9 +7,13 @@ import { AccountList } from '../components/AccountList';
 import { useAccounts } from '../hooks/useAccounts';
 import { useFormatters } from '../../../hooks/useFormatters';
 import type { Account } from '../../../types/models.types';
+import { useSettings } from '../../../contexts/SettingsContext';
+import { getAccountMessages } from '../../../lib/featureLocale';
 
 const AccountsPage = () => {
-  const { formatCurrency } = useFormatters();
+  const { settings } = useSettings();
+  const { formatCurrency, formatPercent } = useFormatters();
+  const messages = getAccountMessages(settings.locale);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
 
@@ -43,35 +47,33 @@ const AccountsPage = () => {
     try {
       if (editingAccount) {
         await updateAccount({ id: editingAccount.id, data });
-        toast.success('Conta atualizada com sucesso!');
+        toast.success(messages.updateSuccess);
       } else {
         await createAccount(data);
-        toast.success('Conta criada com sucesso!');
+        toast.success(messages.createSuccess);
       }
       handleCloseModal();
     } catch (error) {
       toast.error(
         editingAccount
-          ? 'Erro ao atualizar conta'
-          : 'Erro ao criar conta'
+          ? messages.updateError
+          : messages.createError
       );
     }
   };
 
   const handleDelete = async (id: string) => {
     if (
-      !confirm(
-        'Tem certeza que deseja excluir esta conta? Esta ação não pode ser desfeita.'
-      )
+      !confirm(messages.confirmDelete)
     ) {
       return;
     }
 
     try {
       await deleteAccount(id);
-      toast.success('Conta excluída com sucesso!');
+      toast.success(messages.deleteSuccess);
     } catch (error) {
-      toast.error('Erro ao excluir conta');
+      toast.error(messages.deleteError);
     }
   };
 
@@ -94,9 +96,9 @@ const AccountsPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Minhas Contas</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{messages.pageTitle}</h1>
           <p className="text-sm text-gray-500 mt-1">
-            Gerencie suas contas bancárias e cartões
+            {messages.pageSubtitle}
           </p>
         </div>
         <Button
@@ -105,7 +107,7 @@ const AccountsPage = () => {
           disabled={isDeleting}
         >
           <Plus size={20} />
-          Nova Conta
+          {messages.newAccount}
         </Button>
       </div>
 
@@ -127,17 +129,17 @@ const AccountsPage = () => {
                 ) : (
                   <TrendingDown size={16} />
                 )}
-                {Math.abs(balanceChangePercent).toFixed(1)}%
+                {formatPercent(Math.abs(balanceChangePercent), { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-gray-600">Saldo Total</p>
+              <p className="text-sm text-gray-600">{messages.totalBalance}</p>
               <p className="text-2xl font-bold text-gray-900">
                 {formatCurrency(totalBalance)}
               </p>
               <p className="text-xs text-gray-500">
                 {balanceChange >= 0 ? '+' : ''}
-                {formatCurrency(balanceChange)} desde o início
+                {messages.balanceChangeFromStart(formatCurrency(balanceChange))}
               </p>
             </div>
           </div>
@@ -150,9 +152,9 @@ const AccountsPage = () => {
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-gray-600">Total de Contas</p>
+              <p className="text-sm text-gray-600">{messages.totalAccounts}</p>
               <p className="text-2xl font-bold text-gray-900">{accounts.length}</p>
-              <p className="text-xs text-gray-500">Contas ativas</p>
+              <p className="text-xs text-gray-500">{messages.activeAccounts}</p>
             </div>
           </div>
 
@@ -164,13 +166,13 @@ const AccountsPage = () => {
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-sm text-gray-600">Saldo Médio</p>
+              <p className="text-sm text-gray-600">{messages.averageBalance}</p>
               <p className="text-2xl font-bold text-gray-900">
                 {formatCurrency(
                   accounts.length > 0 ? totalBalance / accounts.length : 0
                 )}
               </p>
-              <p className="text-xs text-gray-500">Por conta</p>
+              <p className="text-xs text-gray-500">{messages.perAccount}</p>
             </div>
           </div>
         </div>

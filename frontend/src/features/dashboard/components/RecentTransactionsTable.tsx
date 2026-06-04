@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Search, Filter, ArrowUpDown } from 'lucide-react';
-import { format } from 'date-fns';
+import { useFormatters } from '../../../hooks/useFormatters';
+import { useSettings } from '../../../contexts/SettingsContext';
+import { getDashboardMessages } from '../lib/dashboardLocale';
 
 interface Transaction {
   id: string;
@@ -31,17 +33,19 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-    }).format(Math.abs(value));
-  };
+  const { settings } = useSettings();
+  const { formatCurrency } = useFormatters();
+  const messages = getDashboardMessages(settings.locale);
 
   const formatDate = (date: Date) => {
-    return format(new Date(date), 'EEE hh:mm:ss a');
+    return new Intl.DateTimeFormat(settings.locale, {
+      weekday: 'short',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(date));
   };
 
   const handleSort = (field: SortField) => {
@@ -75,24 +79,24 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
           comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
           break;
         case 'description':
-          comparison = a.description.localeCompare(b.description);
+          comparison = a.description.localeCompare(b.description, settings.locale);
           break;
         case 'amount':
           comparison = a.amount - b.amount;
           break;
         case 'category':
-          comparison = a.category.name.localeCompare(b.category.name);
+          comparison = a.category.name.localeCompare(b.category.name, settings.locale);
           break;
         case 'account':
-          comparison = a.account.name.localeCompare(b.account.name);
+          comparison = a.account.name.localeCompare(b.account.name, settings.locale);
           break;
         case 'status':
-          comparison = (a.status || '').localeCompare(b.status || '');
+          comparison = (a.status || '').localeCompare(b.status || '', settings.locale);
           break;
       }
       return sortDirection === 'asc' ? comparison : -comparison;
     });
-  }, [transactions, searchQuery, sortField, sortDirection]);
+  }, [transactions, searchQuery, sortField, sortDirection, settings.locale]);
 
   // Pagination calculations
   const totalPages = Math.ceil(filteredAndSortedTransactions.length / itemsPerPage);
@@ -110,25 +114,25 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
       case 'success':
         return (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            Success
+            {messages.statuses.success}
           </span>
         );
       case 'pending':
         return (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-            Pending
+            {messages.statuses.pending}
           </span>
         );
       case 'failed':
         return (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-            Failed
+            {messages.statuses.failed}
           </span>
         );
       default:
         return (
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-            Success
+            {messages.statuses.success}
           </span>
         );
     }
@@ -138,14 +142,14 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
     <div className="bg-white rounded-2xl p-6 shadow-card">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Recent Transaction</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{messages.recentTransactions}</h3>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search transactions"
+              placeholder={messages.searchTransactions}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full sm:w-auto pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
@@ -157,7 +161,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
             className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
           >
             <Filter className="w-4 h-4" />
-            <span className="hidden sm:inline">Filter</span>
+            <span className="hidden sm:inline">{messages.filter}</span>
           </button>
         </div>
       </div>
@@ -172,7 +176,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
                   onClick={() => handleSort('description')}
                   className="flex items-center gap-2 text-xs font-semibold text-gray-600 uppercase hover:text-gray-900"
                 >
-                  Transaction
+                  {messages.transaction}
                   <ArrowUpDown className="w-3 h-3" />
                 </button>
               </th>
@@ -181,7 +185,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
                   onClick={() => handleSort('date')}
                   className="flex items-center gap-2 text-xs font-semibold text-gray-600 uppercase hover:text-gray-900"
                 >
-                  Date
+                  {messages.date}
                   <ArrowUpDown className="w-3 h-3" />
                 </button>
               </th>
@@ -190,7 +194,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
                   onClick={() => handleSort('amount')}
                   className="flex items-center gap-2 text-xs font-semibold text-gray-600 uppercase hover:text-gray-900"
                 >
-                  Amount
+                  {messages.amount}
                   <ArrowUpDown className="w-3 h-3" />
                 </button>
               </th>
@@ -199,7 +203,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
                   onClick={() => handleSort('category')}
                   className="flex items-center gap-2 text-xs font-semibold text-gray-600 uppercase hover:text-gray-900"
                 >
-                  Category
+                  {messages.category}
                   <ArrowUpDown className="w-3 h-3" />
                 </button>
               </th>
@@ -208,7 +212,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
                   onClick={() => handleSort('account')}
                   className="flex items-center gap-2 text-xs font-semibold text-gray-600 uppercase hover:text-gray-900"
                 >
-                  Account
+                  {messages.account}
                   <ArrowUpDown className="w-3 h-3" />
                 </button>
               </th>
@@ -217,7 +221,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
                   onClick={() => handleSort('status')}
                   className="flex items-center gap-2 text-xs font-semibold text-gray-600 uppercase hover:text-gray-900"
                 >
-                  Status
+                  {messages.status}
                   <ArrowUpDown className="w-3 h-3" />
                 </button>
               </th>
@@ -227,7 +231,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
             {paginatedTransactions.length === 0 ? (
               <tr>
                 <td colSpan={6} className="text-center py-8 text-gray-500">
-                  No transactions found
+                  {messages.noTransactionsFound}
                 </td>
               </tr>
             ) : (
@@ -278,7 +282,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
       {/* Mobile Card View */}
       <div className="md:hidden space-y-3">
         {paginatedTransactions.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">No transactions found</div>
+          <div className="text-center py-8 text-gray-500">{messages.noTransactionsFound}</div>
         ) : (
           paginatedTransactions.map((transaction) => (
             <div key={transaction.id} className="p-4 bg-gray-50 rounded-xl space-y-3">
@@ -301,7 +305,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
               </div>
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-500">Category:</span>
+                  <span className="text-gray-500">{messages.categoryLabel}</span>
                   <span className="text-gray-700">{transaction.category.name}</span>
                 </div>
                 {getStatusBadge(transaction.status || 'success')}
@@ -315,8 +319,11 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
       {totalPages > 1 && (
         <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
           <div className="text-sm text-gray-600">
-            Showing {startIndex + 1} to {Math.min(endIndex, filteredAndSortedTransactions.length)} of{' '}
-            {filteredAndSortedTransactions.length} transactions
+            {messages.showingResults(
+              startIndex + 1,
+              Math.min(endIndex, filteredAndSortedTransactions.length),
+              filteredAndSortedTransactions.length
+            )}
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -324,7 +331,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
               disabled={currentPage === 1}
               className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              Previous
+              {messages.previous}
             </button>
             <div className="flex items-center gap-1">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -345,7 +352,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
               disabled={currentPage === totalPages}
               className="px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              Next
+              {messages.next}
             </button>
           </div>
         </div>

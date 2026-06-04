@@ -19,9 +19,15 @@ export class AuthService {
   ) { }
 
   async register(dto: RegisterDto) {
+    const email = dto?.email?.trim().toLowerCase();
+
+    if (!email || !dto?.password || !dto?.name) {
+      throw new BadRequestException('Nome, email e senha são obrigatórios');
+    }
+
     // Check if user already exists
     const existingUser = await this.prisma.user.findUnique({
-      where: { email: dto.email },
+      where: { email },
     });
 
     if (existingUser) {
@@ -34,7 +40,7 @@ export class AuthService {
     // Create user
     const user = await this.prisma.user.create({
       data: {
-        email: dto.email,
+        email,
         password: hashedPassword,
         name: dto.name,
       },
@@ -57,9 +63,15 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
+    const email = dto?.email?.trim().toLowerCase();
+
+    if (!email || !dto?.password) {
+      throw new BadRequestException('Email e senha são obrigatórios');
+    }
+
     // Find user
     const user = await this.prisma.user.findUnique({
-      where: { email: dto.email },
+      where: { email },
     });
 
     if (!user) {

@@ -1,282 +1,117 @@
 # Project State - Personal Finance Manager
 
-**Last Updated:** May 30, 2026  
-**Current Phase:** Phase 0 - Foundation  
-**Current Sprint:** Week 1
+**Last Updated:** June 4, 2026  
+**Current Phase:** Automation / Enhancement  
+**Current Sprint Focus:** Reports + Import (CSV -> OFX -> PDF) + Quality baseline
 
 ---
 
-## 🎯 Active Work
+## Active Work
 
 ### Current Focus
-- ✅ Project foundation complete!
-- 🟢 Ready to start feature development
-- 📝 Next: Database schema design and Prisma models
+- Finalizar relatorios mensais no frontend
+- Evoluir importacao de extrato em fases (CSV MVP -> OFX -> PDF)
+- Consolidar qualidade minima para frontend
 
 ### In Progress
-- [ ] M0.2 - Backend Foundation (50% complete)
-  - [x] NestJS project initialized
-  - [x] Prisma ORM configured
-  - [x] Core dependencies installed
-  - [x] Docker Compose for PostgreSQL
-  - [ ] Database schema definition pending
-  - [ ] Prisma migrations pending
-  - [ ] Authentication module pending
+- [~] Reports page: rota pronta, tela placeholder
+- [~] Dashboard: acoes principais conectadas e filtro com redirecionamento para transacoes
+- [~] F010 Importacao: CSV MVP com preview e deduplicacao basica implementado
 
-- [ ] M0.3 - Frontend Foundation (60% complete)
-  - [x] Vite + React + TypeScript initialized
-  - [x] Tailwind CSS configured
-  - [x] Core dependencies installed (React Router, Zustand, TanStack Query)
-  - [ ] Folder structure setup pending
-  - [ ] Base components pending
-  - [ ] Layout components pending
+### Stable and Implemented
+- [x] Backend modules: auth, accounts, categories, transactions, dashboard, recurring
+- [x] Frontend pages: auth, dashboard, accounts, categories, transactions, recurring
+- [x] Recurring generation cron job + trigger manual via endpoint
+- [x] Sidebar sem rotas quebradas (History/Help removidos) e toggle de tema com persistencia
 
 ---
 
-## 🔑 Key Decisions
+## Key Decisions (Current)
 
-### D001 - Project Methodology
-**Date:** May 30, 2026  
-**Decision:** Use TLC Spec-Driven Development methodology  
-**Rationale:** 
-- Structured approach for solo development
-- Clear phase separation (Specify → Design → Tasks → Execute)
-- Persistent memory across sessions
-- Atomic tasks with verification criteria
-**Impact:** All features will follow this workflow  
-**Status:** ✅ Approved
+### D004 - Keep Monorepo Structure
+**Date:** June 2, 2026  
+**Decision:** Continuar com backend e frontend no mesmo repositório.  
+**Rationale:** simplifica desenvolvimento solo, alinhamento de contrato API e docs.
 
-### D002 - Documentation Structure
-**Date:** May 30, 2026  
-**Decision:** Use .specs/ folder for all project documentation  
-**Rationale:**
-- Keeps project root clean
-- Separates code from specs
-- Easy to navigate and maintain
-**Impact:** All planning docs in .specs/  
-**Status:** ✅ Approved
-
-### D003 - Tech Stack
-**Date:** May 30, 2026  
-**Status:** ✅ Approved  
-**Decisions:**
-
-**Backend:**
-- **Framework:** NestJS - Structured, TypeScript-first, modular architecture
-- **Database:** PostgreSQL with Prisma ORM
-- **Auth:** Custom JWT + bcrypt (full control, no external costs)
-
-**Frontend:**
-- **Framework:** Vite + React + TypeScript (SPA with fast dev server)
-- **Styling:** Tailwind CSS
-- **State Management:** Zustand (UI state) + TanStack Query (server state)
-
-**Deployment:**
-- **Frontend:** Vercel (free tier, automatic deployments)
-- **Backend + DB:** Railway (free $5/month, PostgreSQL included)
-
-**Rationale:**
-- NestJS provides structure for long-term maintainability
-- Vite offers blazing-fast development experience
-- Separation of frontend/backend allows independent scaling
-- Railway provides full control over backend + database
-- Total cost: $0-5/month
-
-**Impact:** All subsequent architecture and setup will follow this stack  
-**Alternatives Considered:** Express (too minimal), Next.js (overkill for SPA), Auth0 (future cost)
+### D005 - Reports as Next User-Facing Priority
+**Date:** June 2, 2026  
+**Decision:** Priorizar fechamento de relatorios antes de features de notificacao.  
+**Rationale:** entrega valor direto de analise financeira e reduz gap visivel de produto.
 
 ---
 
-## 🚧 Active Blockers
+## Active Blockers
 
-*No active blockers at this time*
+No hard blockers.
 
----
-
-## 💡 Ideas & Backlog (Deferred)
-
-### For MVP Consideration
-- [ ] Dark mode implementation
-- [ ] Keyboard shortcuts for power users
-- [ ] Excel file direct import (parse .xlsx)
-- [ ] Multi-currency support
-- [ ] Split transactions (e.g., shared expenses)
-
-### Post-MVP
-- [ ] Browser extension for quick expense entry
-- [ ] Receipt OCR scanning
-- [ ] Smart categorization with ML
-- [ ] Budget recommendations based on spending patterns
-- [ ] Telegram/WhatsApp bot for expense entry
-- [ ] Integration with Open Finance
-- [ ] Family/shared accounts
-- [ ] Investment tracking
-- [ ] Bill payment integration
-- [ ] Savings goals with progress tracking
+## Risks
+- Frontend sem testes automatizados pode aumentar regressao em features novas.
+- Divergencia de docs e implementacao pode gerar retrabalho de planejamento.
+- Importacao PDF pode exigir OCR/normalizacao dependendo do layout dos bancos.
 
 ---
 
-## 📝 Lessons Learned
+## Known Issues
 
-*To be populated as project progresses*
-
----
-
-## 🐛 Known Issues
-
-*No known issues yet - project just started*
+- Endpoint/manual generation de recorrentes retorna contadores simplificados (0/0) no retorno manual.
+- Reports page ainda nao consome dados reais.
+- Importacao CSV atual nao cobre todos os formatos complexos (ex.: campos com delimitadores entre aspas).
 
 ---
 
-## 📊 Progress Metrics
+## Progress Metrics
 
-### Overall MVP Progress
-- **Completed:** 0/12 features (0%)
-- **Milestones Completed:** 1/3 foundation milestones (M0.1 ✅)
-- **In Progress:** M0.2 (Backend) + M0.3 (Frontend)
-- **Blocked:** 0
-- **Timeline:** On track (Week 1 of 12)
+### MVP Feature Progress
+- Completed: 8/12
+- Partial: 3/12
+- Not Started: 1/12
 
 ### Phase Progress
-- **Phase 0 (Foundation):** 60% complete
-  - M0.1 Project Setup: ✅ 100%
-  - M0.2 Backend Foundation: 🟡 50%
-  - M0.3 Frontend Foundation: 🟡 60%
-- **Phase 1 (Core):** 0%
-- **Phase 2 (Automation):** 0%
-- **Phase 3 (Enhancement):** 0%
-- **Phase 4 (Polish):** 0%
+- Foundation: 100%
+- Core Features: 100%
+- Automation: 75%
+- Enhancement: 45%
+- Polish: 10%
 
-### Code Statistics
-- **Total Files:** ~150+ (framework boilerplate)
-- **Lines of Code:** ~5,000+ (mostly dependencies)
-- **Test Coverage:** 0% (not started)
-- **Git Commits:** 1
+### Quality and Ops
+- Backend automated tests: available (unit/e2e/coverage scripts)
+- Frontend automated tests: not configured
+- CI/CD: not configured
 
 ---
 
-## 🔄 Recent Changes
+## Recent Changes (Snapshot)
 
-### May 30, 2026
-- ✅ Created project structure (.specs/, backend/, frontend/)
-- ✅ Wrote PROJECT.md with vision and goals
-- ✅ Wrote ROADMAP.md with 12-week plan
-- ✅ Completed STATE.md for tracking
-- ✅ Created ARCHITECTURE.md with full technical design
-- ✅ **Tech stack defined:** NestJS + Vite/React + PostgreSQL/Prisma
-- ✅ **Deployment strategy:** Vercel (frontend) + Railway (backend)
-- ✅ **Git repository initialized** with comprehensive .gitignore
-- ✅ **Backend setup complete:**
-  - NestJS 10.x initialized
-  - Prisma ORM configured
-  - Dependencies installed: JWT, bcrypt, passport, class-validator, node-cron
-- ✅ **Frontend setup complete:**
-  - Vite + React 18 + TypeScript initialized
-  - Tailwind CSS configured
-  - Dependencies installed: React Router, Axios, Zustand, TanStack Query, React Hook Form, Zod, Recharts
-- ✅ **Docker Compose** created for local PostgreSQL
-- ✅ **Environment templates** created (.env.example)
-- ✅ **First commit** made with comprehensive setup
-- 🟢 **M0.1 - Project Setup: 100% COMPLETE**
+### June 2026
+- Core backend/frontend modules stabilized
+- Recurring transaction workflow implemented (CRUD + generation)
+- Dashboard integrated with backend stats
+- Sidebar/navigation cleaned and theme toggle persisted
+- CSV import MVP added in transactions (preview + basic deduplication)
+- Documentation synchronized with real implementation status
 
 ---
 
-## 📅 Upcoming Milestones
+## Next Milestones
 
-### This Week (Week 1)
-- [ ] Complete M0.1 - Project Setup
-- [ ] Start M0.2 - Backend Foundation
+### Sprint A
+- [ ] Finalizar relatorios com dados reais
+- [ ] Evoluir F010 para suporte OFX (mantendo CSV MVP)
+- [ ] Iniciar parser de PDF para importacao (fase 3)
 
-### Next Week (Week 2)
-- [ ] Complete M0.2 - Backend Foundation
-- [ ] Complete M0.3 - Frontend Foundation
+### Sprint B
+- [ ] Fechar status de pagamento no fluxo de UX (acao rapida e visibilidade)
+- [ ] Adicionar primeira bateria de testes frontend
 
-### Week 3
-- [ ] Start M1.1 - Authentication
-- [ ] Start M1.2 - Accounts Management
-
----
-
-## 🎯 Success Criteria Review
-
-### Tracking Against Goals
-| Goal | Target | Current | Status |
-|------|--------|---------|--------|
-| Time reduction | 80% | - | Not measurable yet |
-| Automation | 100% | - | Not started |
-| Load time | <2s | - | Not started |
-| First feature | Week 3 | Week 1 | On track |
+### Sprint C
+- [ ] Preparar deploy com checklist de smoke tests
 
 ---
 
-## 🤝 Dependencies Status
+## Deferred Ideas
 
-### External Dependencies
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Node.js 24.x | ✅ Installed | Version confirmed |
-| PostgreSQL | 🟡 Pending | Need to install/setup for dev |
-| Hosting | ✅ Decided | Vercel (frontend) + Railway (backend) |
-
-### Internal Dependencies
-| Dependency | Status | Notes |
-|------------|--------|-------|
-| Stack definition | ✅ Completed | NestJS + Vite/React + PostgreSQL |
-| Repository setup | 🟡 In Progress | Git init pending |
-| CI/CD | 🔴 Pending | Will setup with deployment |
-
----
-
-## 💭 Open Questions
-
-1. **Q001:** ✅ RESOLVED - Using NestJS
-   - **Decision:** NestJS for structure and scalability
-   - **Date:** May 30, 2026
-   
-2. **Q002:** ✅ RESOLVED - Using Vite + React
-   - **Decision:** Vite + React for fast dev experience
-   - **Date:** May 30, 2026
-
-3. **Q003:** ✅ RESOLVED - Vercel + Railway
-   - **Decision:** Vercel (frontend) + Railway (backend + DB)
-   - **Date:** May 30, 2026
-
-4. **Q004:** ✅ RESOLVED - Custom JWT auth
-   - **Decision:** Self-hosted JWT + bcrypt for full control
-   - **Date:** May 30, 2026
-
-5. **Q005:** Should we use monorepo or separate repos?
-   - **Impact:** Development workflow, deployment complexity
-   - **Decision by:** End of Week 1
-
----
-
-## 📌 Pinned Notes
-
-### Development Principles
-- **Keep it simple:** Don't over-engineer
-- **MVP focus:** Cut features ruthlessly
-- **Test as you go:** Write tests alongside code
-- **Document decisions:** Update STATE.md regularly
-- **Commit atomically:** Small, focused commits
-
-### Personal Reminders
-- Check ROADMAP.md daily for priorities
-- Update STATE.md after each major decision or blocker
-- Keep scope creep in check - park ideas in "Deferred" section
-- Celebrate small wins - solo projects need motivation
-- If stuck > 2 hours, document in blockers and move on
-
----
-
-## 🔗 Quick Links
-
-- [PROJECT.md](PROJECT.md) - Vision and goals
-- [ROADMAP.md](ROADMAP.md) - Full feature roadmap
-- [PRD.md](../../PRD.md) - Original Product Requirements Document
-- [Oportunidade.md](../../Oportunidade.md) - Original problem statement
-
----
-
-**Next Review:** End of Week 1  
-**Next Update:** After stack decision
+- OCR de recibos
+- Open Finance integration
+- Orcamentos por categoria
+- Multi-currency
+- Family/shared accounts

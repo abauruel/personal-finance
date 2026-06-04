@@ -1,6 +1,8 @@
 import { Edit2, Trash2, Wallet, TrendingUp, TrendingDown } from 'lucide-react';
 import type { Account } from '../../../types/models.types';
 import { useFormatters } from '../../../hooks/useFormatters';
+import { useSettings } from '../../../contexts/SettingsContext';
+import { getAccountMessages, getAccountTypeLabel } from '../../../lib/featureLocale';
 
 interface AccountListProps {
   accounts: Account[];
@@ -15,16 +17,9 @@ export function AccountList({
   onDelete,
   isLoading,
 }: AccountListProps) {
+  const { settings } = useSettings();
   const { formatCurrency } = useFormatters();
-
-  const getAccountTypeLabel = (type: string) => {
-    const labels: Record<string, string> = {
-      CHECKING: 'Conta Corrente',
-      SAVINGS: 'Poupança',
-      CREDIT_CARD: 'Cartão de Crédito',
-    };
-    return labels[type] || type;
-  };
+  const messages = getAccountMessages(settings.locale);
 
   const getAccountTypeColor = (type: string) => {
     switch (type.toUpperCase()) {
@@ -72,10 +67,10 @@ export function AccountList({
           <Wallet className="w-10 h-10 text-gray-400" />
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Nenhuma conta cadastrada
+          {messages.list.emptyTitle}
         </h3>
         <p className="text-gray-500 text-sm">
-          Crie sua primeira conta para começar a gerenciar suas finanças
+          {messages.list.emptyHint}
         </p>
       </div>
     );
@@ -102,7 +97,7 @@ export function AccountList({
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-2xl">{getAccountTypeIcon(account.type)}</span>
                   <p className="text-xs opacity-80">
-                    {getAccountTypeLabel(account.type)}
+                    {getAccountTypeLabel(account.type, settings.locale)}
                   </p>
                 </div>
                 <h3 className="text-xl font-bold">{account.name}</h3>
@@ -113,14 +108,14 @@ export function AccountList({
                 <button
                   onClick={() => onEdit(account)}
                   className="p-2 bg-white/20 hover:bg-white/30 rounded-lg backdrop-blur-sm transition-colors"
-                  title="Editar"
+                  title={messages.list.edit}
                 >
                   <Edit2 size={16} />
                 </button>
                 <button
                   onClick={() => onDelete(account.id)}
                   className="p-2 bg-white/20 hover:bg-white/30 rounded-lg backdrop-blur-sm transition-colors"
-                  title="Excluir"
+                  title={messages.list.delete}
                 >
                   <Trash2 size={16} />
                 </button>
@@ -129,7 +124,7 @@ export function AccountList({
 
             {/* Middle Section - Balance */}
             <div>
-              <p className="text-xs opacity-80 mb-1">Saldo Atual</p>
+              <p className="text-xs opacity-80 mb-1">{messages.list.currentBalance}</p>
               <p className="text-3xl font-bold tracking-tight">
                 {formatCurrency(account.currentBalance)}
               </p>
@@ -138,7 +133,7 @@ export function AccountList({
             {/* Bottom Section - Initial Balance & Indicator */}
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-xs opacity-80">Saldo Inicial</p>
+                <p className="text-xs opacity-80">{messages.list.initialBalance}</p>
                 <p className="text-sm font-semibold">
                   {formatCurrency(account.initialBalance)}
                 </p>

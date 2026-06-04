@@ -1,6 +1,9 @@
 import { Plus, Wallet, TrendingUp, TrendingDown } from 'lucide-react';
 import { QuickActionButtons, type ActionType } from './QuickActionButtons';
 import type { AccountCard } from '../api/dashboardApi';
+import { useFormatters } from '../../../hooks/useFormatters';
+import { useSettings } from '../../../contexts/SettingsContext';
+import { getDashboardAccountTypeLabel, getDashboardMessages } from '../lib/dashboardLocale';
 
 interface MyAccountsSectionProps {
   accounts: AccountCard[];
@@ -9,6 +12,10 @@ interface MyAccountsSectionProps {
 }
 
 export function MyAccountsSection({ accounts, onAddAccount, onAction }: MyAccountsSectionProps) {
+  const { settings } = useSettings();
+  const { formatCurrency } = useFormatters();
+  const messages = getDashboardMessages(settings.locale);
+
   const getAccountTypeColor = (type: string) => {
     switch (type.toUpperCase()) {
       case 'CHECKING':
@@ -25,33 +32,20 @@ export function MyAccountsSection({ accounts, onAddAccount, onAction }: MyAccoun
   };
 
   const getAccountTypeLabel = (type: string) => {
-    const labels: Record<string, string> = {
-      CHECKING: 'Conta Corrente',
-      SAVINGS: 'Poupança',
-      INVESTMENT: 'Investimento',
-      CREDIT: 'Cartão de Crédito',
-    };
-    return labels[type.toUpperCase()] || type;
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
+    return getDashboardAccountTypeLabel(type, settings.locale);
   };
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-card h-full w-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gray-900">Minhas Contas</h3>
+        <h3 className="text-lg font-semibold text-gray-900">{messages.myAccounts}</h3>
         <button
           onClick={onAddAccount}
           className="flex items-center gap-1 text-sm font-medium text-primary hover:text-primary-dark transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Adicionar
+          {messages.add}
         </button>
       </div>
 
@@ -61,16 +55,16 @@ export function MyAccountsSection({ accounts, onAddAccount, onAction }: MyAccoun
           <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mb-4">
             <Wallet className="w-10 h-10 text-gray-400" />
           </div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-2">Nenhuma conta cadastrada</h4>
+          <h4 className="text-lg font-semibold text-gray-900 mb-2">{messages.noAccountsTitle}</h4>
           <p className="text-sm text-gray-500 text-center max-w-xs mb-6">
-            Você ainda não possui contas cadastradas. Adicione sua primeira conta para começar.
+            {messages.noAccountsDescription}
           </p>
           <button
             onClick={onAddAccount}
             className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white rounded-xl font-medium transition-colors"
           >
             <Plus className="w-5 h-5" />
-            Adicionar Conta
+            {messages.addAccount}
           </button>
         </div>
       ) : (
@@ -103,7 +97,7 @@ export function MyAccountsSection({ accounts, onAddAccount, onAction }: MyAccoun
 
                   {/* Balance */}
                   <div>
-                    <p className="text-xs opacity-80 mb-1">Saldo Disponível</p>
+                    <p className="text-xs opacity-80 mb-1">{messages.availableBalance}</p>
                     <p className="text-2xl font-bold tracking-tight">{formatCurrency(account.balance)}</p>
                   </div>
                 </div>

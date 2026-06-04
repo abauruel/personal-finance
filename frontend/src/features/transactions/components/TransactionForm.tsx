@@ -7,19 +7,19 @@ import { Button } from '../../../components/ui/Button';
 import { Input } from '../../../components/ui/Input';
 import type {
   Transaction,
-  PaymentType,
-  TransactionStatus,
 } from '../../../types/models.types';
 import { useQuery } from '@tanstack/react-query';
 import { accountsApi } from '../../accounts/api/accountsApi';
 import { categoriesApi } from '../../categories/api/categoriesApi';
+import { useSettings } from '../../../contexts/SettingsContext';
+import { getPaymentTypeLabel, getTransactionMessages, getTransactionStatusLabel } from '../../../lib/featureLocale';
 
-const transactionSchema = z.object({
-  accountId: z.string().min(1, 'Conta é obrigatória'),
-  categoryId: z.string().min(1, 'Categoria é obrigatória'),
-  date: z.string().min(1, 'Data é obrigatória'),
-  amount: z.number().min(0.01, 'Valor deve ser maior que 0'),
-  description: z.string().min(1, 'Descrição é obrigatória'),
+const buildTransactionSchema = (messages: ReturnType<typeof getTransactionMessages>) => z.object({
+  accountId: z.string().min(1, messages.form.validation.accountRequired),
+  categoryId: z.string().min(1, messages.form.validation.categoryRequired),
+  date: z.string().min(1, messages.form.validation.dateRequired),
+  amount: z.number().min(0.01, messages.form.validation.amountMin),
+  description: z.string().min(1, messages.form.validation.descriptionRequired),
   paymentType: z.enum(['DEBIT', 'CREDIT', 'PIX', 'CASH', 'TRANSFER']),
   status: z.enum(['PENDING', 'PAID', 'CANCELLED']),
   notes: z.string().optional(),
@@ -27,7 +27,7 @@ const transactionSchema = z.object({
   recurringId: z.string().optional(),
 });
 
-type TransactionFormData = z.infer<typeof transactionSchema>;
+type TransactionFormData = z.infer<ReturnType<typeof buildTransactionSchema>>;
 
 interface TransactionFormProps {
   transaction?: Transaction;
@@ -36,26 +36,16 @@ interface TransactionFormProps {
   isLoading?: boolean;
 }
 
-const PAYMENT_TYPES: { value: PaymentType; label: string }[] = [
-  { value: 'DEBIT', label: 'Débito' },
-  { value: 'CREDIT', label: 'Crédito' },
-  { value: 'PIX', label: 'PIX' },
-  { value: 'CASH', label: 'Dinheiro' },
-  { value: 'TRANSFER', label: 'Transferência' },
-];
-
-const TRANSACTION_STATUSES: { value: TransactionStatus; label: string }[] = [
-  { value: 'PENDING', label: 'Pendente' },
-  { value: 'PAID', label: 'Pago' },
-  { value: 'CANCELLED', label: 'Cancelado' },
-];
-
 export function TransactionForm({
   transaction,
   onSubmit,
   onCancel,
   isLoading,
 }: TransactionFormProps) {
+  const { settings } = useSettings();
+  const messages = getTransactionMessages(settings.locale);
+  const transactionSchema = buildTransactionSchema(messages);
+
   const { data: accounts = [] } = useQuery({
     queryKey: ['accounts'],
     queryFn: accountsApi.getAll,
@@ -115,7 +105,7 @@ export function TransactionForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">
-          {transaction ? 'Editar Transação' : 'Nova Transação'}
+          {transaction ? messages.form.editTitle : messages.form.createTitle}
         </h2>
         <button
           type="button"
@@ -129,13 +119,13 @@ export function TransactionForm({
       {/* Account Selection */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Conta *
+          {messages.form.account}
         </label>
         <select
           {...register('accountId')}
           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">Selecione uma conta</option>
+          <option value="">{messages.form.accountPlaceholder}</option>
           {accounts.map((account) => (
             <option key={account.id} value={account.id}>
               {account.name} - {account.type}
@@ -150,13 +140,13 @@ export function TransactionForm({
       {/* Category Selection */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Categoria *
+          {messages.form.category}
         </label>
         <select
           {...register('categoryId')}
           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">Selecione uma categoria</option>
+          <option value="">{messages.form.categoryPlaceholder}</option>
           {categories.map((category) => (
             <option key={category.id} value={category.id}>
               {category.icon} {category.name}
@@ -171,7 +161,7 @@ export function TransactionForm({
       {/* Date */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Data *
+          {messages.form.date}
         </label>
         <Input type="date" {...register('date')} error={errors.date?.message} />
       </div>
@@ -179,13 +169,13 @@ export function TransactionForm({
       {/* Amount */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Valor *
+          {messages.form.amount}
         </label>
         <Input
           type="number"
           step="0.01"
           placeholder="0.00"
-          {...register('amount')}
+          {...register('amount', { valueAsNumber: true })}
           error={errors.amount?.message}
         />
       </div>
@@ -193,11 +183,11 @@ export function TransactionForm({
       {/* Description */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Descrição *
+          {messages.form.description}
         </label>
         <Input
           {...register('description')}
-          placeholder="Ex: Supermercado, Salário..."
+          placeholder={messages.form.descriptionPlaceholder}
           error={errors.description?.message}
         />
       </div>
@@ -205,15 +195,15 @@ export function TransactionForm({
       {/* Payment Type */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Tipo de Pagamento *
+          {messages.form.paymentType}
         </label>
         <select
           {...register('paymentType')}
           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
         >
-          {PAYMENT_TYPES.map((type) => (
-            <option key={type.value} value={type.value}>
-              {type.label}
+          {(['DEBIT', 'CREDIT', 'PIX', 'CASH', 'TRANSFER'] as const).map((type) => (
+            <option key={type} value={type}>
+              {getPaymentTypeLabel(type, settings.locale)}
             </option>
           ))}
         </select>
@@ -227,15 +217,15 @@ export function TransactionForm({
       {/* Status */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Status *
+          {messages.form.status}
         </label>
         <select
           {...register('status')}
           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
         >
-          {TRANSACTION_STATUSES.map((status) => (
-            <option key={status.value} value={status.value}>
-              {status.label}
+          {(['PENDING', 'PAID', 'CANCELLED'] as const).map((status) => (
+            <option key={status} value={status}>
+              {getTransactionStatusLabel(status, settings.locale)}
             </option>
           ))}
         </select>
@@ -247,20 +237,20 @@ export function TransactionForm({
       {/* Notes */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Observações
+          {messages.form.notes}
         </label>
         <textarea
           {...register('notes')}
           rows={3}
           className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-          placeholder="Observações adicionais (opcional)"
+          placeholder={messages.form.notesPlaceholder}
         />
       </div>
 
       {/* Actions */}
       <div className="flex gap-3 pt-4">
         <Button type="submit" disabled={isLoading} isFullWidth>
-          {isLoading ? 'Salvando...' : 'Salvar'}
+          {isLoading ? messages.form.saving : messages.form.save}
         </Button>
         <Button
           type="button"
@@ -269,7 +259,7 @@ export function TransactionForm({
           disabled={isLoading}
           isFullWidth
         >
-          Cancelar
+          {messages.form.cancel}
         </Button>
       </div>
     </form>

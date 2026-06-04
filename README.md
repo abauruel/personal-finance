@@ -1,161 +1,107 @@
-# Personal Finance Manager 💰
+# Personal Finance Manager
 
-Modern web application for personal finance management with automation and intelligent insights.
+Aplicacao web para gerenciamento de financas pessoais com foco em automacao de rotina mensal.
 
-## 🎯 Project Overview
+## Status Atual
 
-An application that automates personal finance tracking, eliminating manual Excel work with features like:
-- ✅ Automated monthly period management
-- ✅ Smart recurring transactions
-- ✅ Real-time dashboard
-- ✅ Intelligent categorization
-- ✅ Multi-account/card support
+- Fase atual: Core Features concluida, Automation em andamento
+- Backend: modulos principais implementados (auth, accounts, categories, transactions, dashboard, recurring)
+- Frontend: fluxo principal implementado; pagina de relatorios ainda em desenvolvimento
 
-**Status:** 🟡 In Development - Phase 0 (Foundation)  
-**Timeline:** 12 weeks to MVP (Week 1 of 12)
+## Documentacao
 
-## 📚 Documentation
+- [PRD.md](PRD.md)
+- [.specs/project/PROJECT.md](.specs/project/PROJECT.md)
+- [.specs/project/ROADMAP.md](.specs/project/ROADMAP.md)
+- [.specs/project/ARCHITECTURE.md](.specs/project/ARCHITECTURE.md)
+- [.specs/project/STATE.md](.specs/project/STATE.md)
+- [TESTING.md](TESTING.md)
 
-- [PRD.md](PRD.md) - Product Requirements Document
-- [.specs/project/PROJECT.md](.specs/project/PROJECT.md) - Project Definition
-- [.specs/project/ROADMAP.md](.specs/project/ROADMAP.md) - Feature Roadmap
-- [.specs/project/ARCHITECTURE.md](.specs/project/ARCHITECTURE.md) - Technical Architecture
-- [.specs/project/STATE.md](.specs/project/STATE.md) - Current Project State
-
-## 🛠️ Tech Stack
+## Stack Tecnica
 
 ### Backend
-- **Framework:** NestJS 10.x + TypeScript
-- **Database:** PostgreSQL 15.x
-- **ORM:** Prisma 5.x
-- **Auth:** JWT + bcrypt
-- **Deployment:** Railway
+- NestJS 10 + TypeScript
+- PostgreSQL + Prisma 7
+- JWT + Passport + bcrypt
+- Scheduler com @nestjs/schedule
 
 ### Frontend
-- **Framework:** Vite 5.x + React 18.x + TypeScript
-- **Styling:** Tailwind CSS 3.x
-- **State:** Zustand + TanStack Query
-- **Routing:** React Router 6.x
-- **Deployment:** Vercel
+- Vite 8 + React 19 + TypeScript
+- Tailwind CSS 4
+- TanStack Query + Zustand
+- React Router 7
 
-## 🚀 Getting Started
+## Features MVP
 
-### Prerequisites
-- Node.js 24.x
-- PostgreSQL 15.x
-- npm or yarn
+### Implementadas
+- Autenticacao (registro, login, refresh, profile)
+- CRUD de contas
+- CRUD de categorias
+- CRUD de transacoes com filtros/paginacao
+- Dashboard com cards, trend e transacoes recentes
+- Recorrencias (CRUD + toggle + geracao manual e agendada)
 
-### Installation
+### Em andamento
+- Relatorios mensais (rota e pagina base prontas, conteudo pendente)
 
-**Backend:**
+### Proximas
+- Importacao de extratos (CSV/XLSX)
+- Alertas e notificacoes
+- Polimento de UX e cobertura de testes
+
+## Como Rodar
+
+### Pre-requisitos
+- Node.js 24+
+- PostgreSQL 15+
+
+### Backend
 ```bash
 cd backend
 npm install
 cp .env.example .env
-# Configure DATABASE_URL in .env
 npx prisma migrate dev
+npm run prisma:seed
 npm run start:dev
 ```
 
-**Frontend:**
+### Frontend
 ```bash
 cd frontend
 npm install
 cp .env.example .env
-# Configure VITE_API_URL in .env
 npm run dev
 ```
 
-### Development
+Backend: http://localhost:3000/api/v1  
+Frontend: http://localhost:5173
 
-Backend runs on: `http://localhost:3000`  
-Frontend runs on: `http://localhost:5173`
+## Testes
 
-## 📁 Project Structure
-
-```
-personal-finance/
-├── .specs/                    # Project documentation
-│   ├── project/              # Core project docs
-│   ├── features/             # Feature specifications
-│   └── quick/                # Ad-hoc task tracking
-├── backend/                  # NestJS API
-│   ├── src/
-│   ├── prisma/
-│   └── test/
-├── frontend/                 # React SPA
-│   ├── src/
-│   └── public/
-├── PRD.md                    # Product Requirements
-├── Oportunidade.md           # Original problem statement
-└── README.md                 # This file
-```
-
-## 🎯 MVP Features (12 weeks)
-
-### Phase 1: Core Features (Week 3-6)
-- [x] Authentication
-- [x] Account Management
-- [x] Categories
-- [x] Transactions CRUD
-- [x] Basic Dashboard
-- [x] Monthly Periods
-
-### Phase 2: Automation (Week 7-8)
-- [ ] Recurring Transactions
-- [ ] Auto-Generate Recurring
-- [ ] Payment Status Management
-
-### Phase 3: Enhancement (Week 9-10)
-- [ ] Import Transactions
-- [ ] Alerts & Notifications
-- [ ] Monthly Reports
-
-### Phase 4: Polish (Week 11-12)
-- [ ] UI/UX Polish
-- [ ] Testing & QA
-- [ ] Documentation
-- [ ] Deployment
-
-## 🧪 Testing
-
+Backend:
 ```bash
-# Backend
 cd backend
-npm run test           # Unit tests
-npm run test:e2e       # E2E tests
-npm run test:cov       # Coverage
-
-# Frontend
-cd frontend
-npm run test           # Unit tests
-npm run test:e2e       # Playwright E2E
+npm run test
+npm run test:e2e
+npm run test:cov
 ```
 
-## 📊 Progress
+Frontend:
+- Atualmente sem suite automatizada configurada.
+- Validacao atual via lint/build e cenarios manuais em [TESTING.md](TESTING.md).
 
-- **Overall:** 0% (0/12 features)
-- **Phase 0 (Foundation):** 90% (in progress)
-- **Timeline:** On track
+## Progresso
 
-## 🤝 Contributing
+- Base tecnica: 100%
+- Core Features: 100%
+- Automation: parcial
+- Enhancement: parcial
 
-This is a personal project, but suggestions are welcome! Feel free to open issues.
+## Autor
 
-## 📄 License
-
-MIT License - see LICENSE file for details
-
-## 👤 Author
-
-**Alex Bauruel**
-
-## 🔗 Links
-
-- [Live App](https://personalfinance.app) _(coming soon)_
-- [API Docs](https://api.personalfinance.app/docs) _(coming soon)_
+Alex Bauruel
 
 ---
 
-**Last Updated:** May 30, 2026  
-**Version:** 0.1.0 (Pre-Alpha)
+Last Updated: June 2, 2026
+Version: 0.2.0
