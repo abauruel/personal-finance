@@ -1,11 +1,15 @@
 import { useMemo, useState, type ChangeEvent } from 'react';
 import { Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
 import { Modal } from '../../../components/ui/Modal';
 import { Button } from '../../../components/ui/Button';
 import type { Account, Category, CreateTransactionDto, Transaction } from '../../../types/models.types';
 import { useSettings } from '../../../contexts/SettingsContext';
 import { useFormatters } from '../../../hooks/useFormatters';
 import { getTransactionMessages } from '../../../lib/featureLocale';
+
+GlobalWorkerOptions.workerSrc = pdfWorker;
 
 interface CsvImportModalProps {
   isOpen: boolean;
@@ -17,8 +21,7 @@ interface CsvImportModalProps {
   isImporting: boolean;
 }
 
-interface ParsedCsvRow {
-  rawLine: string;
+interface ParsedImportRow {
   date: string;
   description: string;
   amount: number;
@@ -33,9 +36,16 @@ interface PreviewRow {
   valid: boolean;
   duplicate: boolean;
   reason?: string;
-  parsed?: ParsedCsvRow;
+  parsed?: ParsedImportRow;
   mapped?: CreateTransactionDto;
 }
+
+type ImportFormat = 'csv' | 'ofx' | 'pdf' | 'unknown';
+
+type PdfTextItem = {
+  str: string;
+  transform: number[];
+};
 
 const PAYMENT_TYPE_MAP: Record<string, CreateTransactionDto['paymentType']> = {
   DEBIT: 'DEBIT',
@@ -93,9 +103,11 @@ function parseDateToIso(value: string): string | null {
 
   if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed;
 
-  const br = trimmed.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  const br = trimmed.match(/^((\d{2})[\/-](\d{2})[\/-](\d{4}))$/);
   if (br) {
-    const [, dd, mm, yyyy] = br;
+    const dd = br[2];
+    const mm = br[3];
+    const yyyy = br[4];
     return `${yyyy}-${mm}-${dd}`;
   }
 
@@ -112,6 +124,187 @@ function buildTransactionKey(date: string, description: string, amount: number):
   return `${date}|${normalizeText(description)}|${amount.toFixed(2)}`;
 }
 
+function detectFormat(file: File): ImportFormat {
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.csv')) return 'csv';
+  if (name.endsWith('.ofx')) return 'ofx';
+  if (name.endsWith('.pdf')) return 'pdf';
+  return 'unknown';
+}
+
+function parseCsvText(text: string): ParsedImportRow[] {
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
+  if (lines.length < 2) return [];
+
+  const delimiter = (lines[0].match(/;/g) || []).length > (lines[0].match(/,/g) || []).length ? ';' : ',';
+  const headers = lines[0].split(delimiter).map((h) => normalizeHeader(h));
+
+  const dateIdx = headers.findIndex((h) => ['date', 'data', 'datatransacao'].includes(h));
+  const descIdx = headers.findIndex((h) => ['description', 'descricao', 'historico', 'desc'].includes(h));
+  const amountIdx = headers.findIndex((h) => ['amount', 'valor', 'value'].includes(h));
+  const paymentTypeIdx = headers.findIndex((h) => ['paymenttype', 'tipopagamento', 'tipo'].includes(h));
+  const statusIdx = headers.findIndex((h) => ['status', 'situacao'].includes(h));
+  const categoryIdx = headers.findIndex((h) => ['category', 'categoria'].includes(h));
+  const notesIdx = headers.findIndex((h) => ['notes', 'nota', 'observacao', 'obs'].includes(h));
+
+  const parsed: ParsedImportRow[] = [];
+
+  for (let i = 1; i < lines.length; i += 1) {
+    const cols = lines[i].split(delimiter).map((c) => c.trim());
+
+    const isoDate = parseDateToIso(cols[dateIdx] || '');
+    const description = cols[descIdx] || '';
+    const amount = parseAmount(cols[amountIdx] || '');
+
+    if (!isoDate || !description || amount === null) {
+      continue;
+    }
+
+    const paymentRaw = normalizeHeader(cols[paymentTypeIdx] || '');
+    const statusRaw = normalizeHeader(cols[statusIdx] || '');
+
+    const paymentType = PAYMENT_TYPE_MAP[paymentRaw.toUpperCase()] || (amount < 0 ? 'DEBIT' : 'CREDIT');
+    const status = STATUS_MAP[statusRaw.toUpperCase()] || 'PAID';
+
+    parsed.push({
+      date: isoDate,
+      description,
+      amount,
+      paymentType,
+      status,
+      categoryName: categoryIdx >= 0 ? cols[categoryIdx] : undefined,
+      notes: notesIdx >= 0 ? cols[notesIdx] : undefined,
+    });
+  }
+
+  return parsed;
+}
+
+function getOfxTagValue(section: string, tag: string): string {
+  const match = section.match(new RegExp(`<${tag}>([^<\r\n]+)`, 'i'));
+  return match?.[1]?.trim() || '';
+}
+
+function parseOfxDate(value: string): string | null {
+  if (!value) return null;
+  const digits = value.replace(/[^0-9]/g, '');
+  if (digits.length < 8) return null;
+  const yyyy = digits.slice(0, 4);
+  const mm = digits.slice(4, 6);
+  const dd = digits.slice(6, 8);
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+function parseOfxText(text: string): ParsedImportRow[] {
+  const segments = text.split(/<STMTTRN>/i).slice(1);
+  const rows: ParsedImportRow[] = [];
+
+  segments.forEach((segment) => {
+    const date = parseOfxDate(getOfxTagValue(segment, 'DTPOSTED'));
+    const amountRaw = getOfxTagValue(segment, 'TRNAMT');
+    const amount = parseAmount(amountRaw);
+    const description = getOfxTagValue(segment, 'MEMO') || getOfxTagValue(segment, 'NAME');
+
+    if (!date || amount === null || !description) {
+      return;
+    }
+
+    rows.push({
+      date,
+      description,
+      amount,
+      paymentType: amount < 0 ? 'DEBIT' : 'CREDIT',
+      status: 'PAID',
+      notes: `OFX:${getOfxTagValue(segment, 'FITID')}`,
+    });
+  });
+
+  return rows;
+}
+
+function extractLinesFromPdfItems(items: PdfTextItem[]): string[] {
+  const grouped = new Map<number, string[]>();
+
+  items.forEach((item) => {
+    const y = Math.round(item.transform[5]);
+    const current = grouped.get(y) || [];
+    current.push(item.str);
+    grouped.set(y, current);
+  });
+
+  return [...grouped.entries()]
+    .sort((a, b) => b[0] - a[0])
+    .map(([, parts]) => parts.join(' ').replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+}
+
+function parsePdfLines(lines: string[]): ParsedImportRow[] {
+  const rows: ParsedImportRow[] = [];
+
+  lines.forEach((line) => {
+    const dateMatch = line.match(/\b\d{2}[\/-]\d{2}[\/-]\d{4}\b/);
+    const amountMatches = line.match(/-?\d{1,3}(?:\.\d{3})*,\d{2}|-?\d+\.\d{2}/g);
+
+    if (!dateMatch || !amountMatches || amountMatches.length === 0) {
+      return;
+    }
+
+    const date = parseDateToIso(dateMatch[0]);
+    const amount = parseAmount(amountMatches[amountMatches.length - 1]);
+
+    if (!date || amount === null) {
+      return;
+    }
+
+    const amountText = amountMatches[amountMatches.length - 1];
+    const description = line
+      .replace(dateMatch[0], '')
+      .replace(amountText, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    rows.push({
+      date,
+      description: description || 'Transacao importada de PDF',
+      amount,
+      paymentType: amount < 0 ? 'DEBIT' : 'CREDIT',
+      status: 'PAID',
+    });
+  });
+
+  return rows;
+}
+
+async function parsePdfFile(file: File): Promise<ParsedImportRow[]> {
+  const data = new Uint8Array(await file.arrayBuffer());
+  const loadingTask = getDocument({ data });
+  const pdf = await loadingTask.promise;
+
+  const allLines: string[] = [];
+
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
+    const page = await pdf.getPage(pageNum);
+    const textContent = await page.getTextContent();
+    const items: PdfTextItem[] = textContent.items
+      .filter(
+        (item) =>
+          typeof item === 'object' &&
+          item !== null &&
+          'str' in item &&
+          'transform' in item,
+      )
+      .map((item) => item as PdfTextItem);
+    const lines = extractLinesFromPdfItems(items);
+    allLines.push(...lines);
+  }
+
+  return parsePdfLines(allLines);
+}
+
 export function CsvImportModal({
   isOpen,
   onClose,
@@ -125,7 +318,8 @@ export function CsvImportModal({
   const { formatCurrency } = useFormatters();
   const messages = getTransactionMessages(settings.locale);
   const [fileName, setFileName] = useState<string>('');
-  const [rawRows, setRawRows] = useState<ParsedCsvRow[]>([]);
+  const [format, setFormat] = useState<ImportFormat>('unknown');
+  const [rawRows, setRawRows] = useState<ParsedImportRow[]>([]);
   const [previewRows, setPreviewRows] = useState<PreviewRow[]>([]);
   const [defaultAccountId, setDefaultAccountId] = useState<string>('');
   const [defaultCategoryId, setDefaultCategoryId] = useState<string>('');
@@ -154,6 +348,7 @@ export function CsvImportModal({
 
   const resetState = () => {
     setFileName('');
+    setFormat('unknown');
     setRawRows([]);
     setPreviewRows([]);
     setReplaceDuplicates(false);
@@ -164,7 +359,7 @@ export function CsvImportModal({
     onClose();
   };
 
-  const rebuildPreview = (rows: ParsedCsvRow[], accountId: string, categoryId: string) => {
+  const rebuildPreview = (rows: ParsedImportRow[], accountId: string, categoryId: string) => {
     const nextPreview: PreviewRow[] = rows.map((row, idx) => {
       if (!accountId) {
         return {
@@ -227,67 +422,26 @@ export function CsvImportModal({
     rebuildPreview(rawRows, defaultAccountId, value);
   };
 
-  const parseCsvText = (text: string): ParsedCsvRow[] => {
-    const lines = text
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter((line) => line.length > 0);
-
-    if (lines.length < 2) return [];
-
-    const delimiter = (lines[0].match(/;/g) || []).length > (lines[0].match(/,/g) || []).length ? ';' : ',';
-    const headers = lines[0].split(delimiter).map((h) => normalizeHeader(h));
-
-    const dateIdx = headers.findIndex((h) => ['date', 'data', 'datatransacao'].includes(h));
-    const descIdx = headers.findIndex((h) => ['description', 'descricao', 'historico', 'desc'].includes(h));
-    const amountIdx = headers.findIndex((h) => ['amount', 'valor', 'value'].includes(h));
-    const paymentTypeIdx = headers.findIndex((h) => ['paymenttype', 'tipopagamento', 'tipo'].includes(h));
-    const statusIdx = headers.findIndex((h) => ['status', 'situacao'].includes(h));
-    const categoryIdx = headers.findIndex((h) => ['category', 'categoria'].includes(h));
-    const notesIdx = headers.findIndex((h) => ['notes', 'nota', 'observacao', 'obs'].includes(h));
-
-    const parsed: ParsedCsvRow[] = [];
-
-    for (let i = 1; i < lines.length; i += 1) {
-      const cols = lines[i].split(delimiter).map((c) => c.trim());
-
-      const isoDate = parseDateToIso(cols[dateIdx] || '');
-      const description = cols[descIdx] || '';
-      const amount = parseAmount(cols[amountIdx] || '');
-
-      if (!isoDate || !description || amount === null) {
-        continue;
-      }
-
-      const paymentRaw = normalizeHeader(cols[paymentTypeIdx] || '');
-      const statusRaw = normalizeHeader(cols[statusIdx] || '');
-
-      const paymentType = PAYMENT_TYPE_MAP[paymentRaw.toUpperCase()] || 'DEBIT';
-      const status = STATUS_MAP[statusRaw.toUpperCase()] || 'PENDING';
-
-      parsed.push({
-        rawLine: lines[i],
-        date: isoDate,
-        description,
-        amount,
-        paymentType,
-        status,
-        categoryName: categoryIdx >= 0 ? cols[categoryIdx] : undefined,
-        notes: notesIdx >= 0 ? cols[notesIdx] : undefined,
-      });
-    }
-
-    return parsed;
-  };
-
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setFileName(file.name);
+    const detected = detectFormat(file);
+    setFormat(detected);
 
-    const text = await file.text();
-    const parsed = parseCsvText(text);
+    let parsed: ParsedImportRow[] = [];
+
+    if (detected === 'csv') {
+      const text = await file.text();
+      parsed = parseCsvText(text);
+    } else if (detected === 'ofx') {
+      const text = await file.text();
+      parsed = parseOfxText(text);
+    } else if (detected === 'pdf') {
+      parsed = await parsePdfFile(file);
+    }
+
     setRawRows(parsed);
     rebuildPreview(parsed, defaultAccountId, defaultCategoryId);
   };
@@ -300,12 +454,18 @@ export function CsvImportModal({
 
     if (importRows.length === 0) return;
 
-    await onImport(importRows);
-    handleClose();
+    try {
+      await onImport(importRows);
+      handleClose();
+    } catch {
+      // Error feedback is handled by parent mutation toast.
+    }
   };
 
+  const importTitle = `${messages.csv.title}${format !== 'unknown' ? ` (${format.toUpperCase()})` : ''}`;
+
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title={messages.csv.title} size="xl">
+    <Modal isOpen={isOpen} onClose={handleClose} title={importTitle} size="xl">
       <div className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -347,11 +507,15 @@ export function CsvImportModal({
             <span className="text-sm text-gray-700">
               {fileName || messages.csv.selectFile}
             </span>
-            <input type="file" accept=".csv,text/csv" onChange={handleFileChange} className="hidden" />
+            <input
+              type="file"
+              accept=".csv,.ofx,.pdf,text/csv,application/pdf"
+              onChange={handleFileChange}
+              className="hidden"
+            />
           </label>
-          <p className="mt-2 text-xs text-gray-500">
-            {messages.csv.expectedColumns}
-          </p>
+          <p className="mt-2 text-xs text-gray-500">{messages.csv.supportedFormats}</p>
+          <p className="mt-1 text-xs text-gray-500">{messages.csv.expectedColumns}</p>
         </div>
 
         <div className="grid grid-cols-3 gap-3 text-sm">
@@ -430,7 +594,10 @@ export function CsvImportModal({
           </Button>
           <Button
             onClick={handleImport}
-            disabled={isImporting || previewRows.filter((row) => row.valid && row.mapped && (replaceDuplicates || !row.duplicate)).length === 0}
+            disabled={
+              isImporting ||
+              previewRows.filter((row) => row.valid && row.mapped && (replaceDuplicates || !row.duplicate)).length === 0
+            }
           >
             {isImporting ? messages.csv.importing : messages.csv.import}
           </Button>

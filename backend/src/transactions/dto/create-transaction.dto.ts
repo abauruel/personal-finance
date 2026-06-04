@@ -2,11 +2,11 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  NotEquals,
   IsOptional,
   IsString,
   IsDateString,
   IsBoolean,
-  Min
 } from 'class-validator';
 
 export class CreateTransactionDto {
@@ -24,7 +24,7 @@ export class CreateTransactionDto {
 
   @IsNotEmpty()
   @IsNumber()
-  @Min(0.01, { message: 'O valor deve ser maior que zero' })
+  @NotEquals(0, { message: 'O valor nao pode ser zero' })
   amount: number;
 
   @IsNotEmpty()

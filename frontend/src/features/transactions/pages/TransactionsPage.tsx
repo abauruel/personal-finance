@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Filter, Upload } from 'lucide-react';
 import { toast } from 'sonner';
+import type { AxiosError } from 'axios';
 import { Button } from '../../../components/ui/Button';
 import { Modal } from '../../../components/ui/Modal';
 import { TransactionForm } from '../components/TransactionForm';
@@ -116,8 +117,11 @@ const TransactionsPage = () => {
       toast.success(messages.importSuccess);
       setIsImportModalOpen(false);
     },
-    onError: () => {
-      toast.error(messages.importError);
+    onError: (error: unknown) => {
+      const axiosError = error as AxiosError<{ message?: string | string[] }>;
+      const message = axiosError.response?.data?.message;
+      const errorMessage = Array.isArray(message) ? message.join(', ') : message;
+      toast.error(errorMessage || messages.importError);
     },
   });
 
@@ -170,7 +174,7 @@ const TransactionsPage = () => {
             className="flex items-center gap-2"
           >
             <Upload size={20} />
-            {messages.importCsv}
+            {messages.importFile}
           </Button>
           <Button
             variant="secondary"
