@@ -57,6 +57,11 @@ No hard blockers.
 - Reports page ainda nao consome dados reais.
 - Importacao CSV atual nao cobre todos os formatos complexos (ex.: campos com delimitadores entre aspas).
 
+## Lessons Learned
+
+- NestJS + ValidationPipe: DTOs usados em `@Body()` devem ser importados como valor (nao `import type`) para preservar metadata de runtime.
+- Sintoma observado: erro 400 com mensagens `property ... should not exist` mesmo com payload valido.
+
 ---
 
 ## Progress Metrics
@@ -88,6 +93,7 @@ No hard blockers.
 - Dashboard integrated with backend stats
 - Sidebar/navigation cleaned and theme toggle persisted
 - CSV import MVP added in transactions (preview + basic deduplication)
+- Fixed runtime DTO metadata issue in controllers (accounts/categories/transactions) that blocked create routes
 - Documentation synchronized with real implementation status
 
 ---

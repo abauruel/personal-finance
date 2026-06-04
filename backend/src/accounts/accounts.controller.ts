@@ -11,7 +11,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { AccountsService } from './accounts.service';
-import type { CreateAccountDto, UpdateAccountDto } from './dto';
+import { CreateAccountDto, UpdateAccountDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 

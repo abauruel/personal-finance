@@ -12,7 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
-import type { CreateTransactionDto, UpdateTransactionDto } from './dto';
+import { CreateTransactionDto, UpdateTransactionDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 
