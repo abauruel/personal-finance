@@ -6,7 +6,6 @@ import { Modal } from '../../../components/ui/Modal';
 import { Button } from '../../../components/ui/Button';
 import type { Account, Category, CreateTransactionDto, Transaction } from '../../../types/models.types';
 import { useSettings } from '../../../contexts/SettingsContext';
-import { useFormatters } from '../../../hooks/useFormatters';
 import { getTransactionMessages } from '../../../lib/featureLocale';
 
 GlobalWorkerOptions.workerSrc = pdfWorker;
@@ -29,6 +28,7 @@ interface ParsedImportRow {
   status: NonNullable<CreateTransactionDto['status']>;
   categoryName?: string;
   notes?: string;
+  debugInfo?: string;
 }
 
 interface PreviewRow {
@@ -41,10 +41,41 @@ interface PreviewRow {
 }
 
 type ImportFormat = 'csv' | 'ofx' | 'pdf' | 'unknown';
+type ImportPaymentKind = 'DEBIT' | 'CREDIT' | '';
 
 type PdfTextItem = {
   str: string;
   transform: number[];
+};
+
+type PositionedPdfItem = {
+  text: string;
+  x: number;
+  y: number;
+};
+
+type GroupedPdfLine = {
+  y: number;
+  items: PositionedPdfItem[];
+};
+
+type PdfColumns = {
+  headerLineIndex: number;
+  historyX: number;
+  cityX: number | null;
+  rsX: number;
+};
+
+type RsAmountMatch = {
+  amount: number;
+  rawValue: string;
+  x: number;
+};
+
+type ParsedPdfLine = {
+  date: string;
+  amount: number;
+  description: string;
 };
 
 const PAYMENT_TYPE_MAP: Record<string, CreateTransactionDto['paymentType']> = {
@@ -109,6 +140,31 @@ function parseDateToIso(value: string): string | null {
     const mm = br[3];
     const yyyy = br[4];
     return `${yyyy}-${mm}-${dd}`;
+  }
+
+  const brShortYear = trimmed.match(/^((\d{2})[\/-](\d{2})[\/-](\d{2}))$/);
+  if (brShortYear) {
+    const dd = brShortYear[2];
+    const mm = brShortYear[3];
+    const yy = Number(brShortYear[4]);
+    const yyyy = yy >= 70 ? 1900 + yy : 2000 + yy;
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  const brNoYear = trimmed.match(/^((\d{2})[\/-](\d{2}))$/);
+  if (brNoYear) {
+    const dd = brNoYear[2];
+    const mm = brNoYear[3];
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    let year = now.getFullYear();
+
+    // Invoice transactions close to year boundaries often belong to previous year.
+    if (currentMonth <= 2 && Number(mm) >= 11) {
+      year -= 1;
+    }
+
+    return `${year}-${mm}-${dd}`;
   }
 
   const parsed = new Date(trimmed);
@@ -227,52 +283,266 @@ function parseOfxText(text: string): ParsedImportRow[] {
 }
 
 function extractLinesFromPdfItems(items: PdfTextItem[]): string[] {
-  const grouped = new Map<number, string[]>();
+  const grouped = new Map<number, PdfTextItem[]>();
 
   items.forEach((item) => {
     const y = Math.round(item.transform[5]);
     const current = grouped.get(y) || [];
-    current.push(item.str);
+    current.push(item);
     grouped.set(y, current);
   });
 
   return [...grouped.entries()]
     .sort((a, b) => b[0] - a[0])
-    .map(([, parts]) => parts.join(' ').replace(/\s+/g, ' ').trim())
+    .map(([, parts]) =>
+      parts
+        .sort((a, b) => a.transform[4] - b.transform[4])
+        .map((part) => part.str)
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim(),
+    )
     .filter(Boolean);
+}
+
+function toPositionedPdfItems(items: PdfTextItem[]): PositionedPdfItem[] {
+  return items
+    .map((item) => ({
+      text: item.str.trim(),
+      x: item.transform[4],
+      y: item.transform[5],
+    }))
+    .filter((item) => item.text.length > 0);
+}
+
+function groupPositionedPdfItemsByLine(items: PositionedPdfItem[]): GroupedPdfLine[] {
+  const sorted = [...items].sort((a, b) => b.y - a.y);
+  const lines: GroupedPdfLine[] = [];
+  const yTolerance = 2;
+
+  sorted.forEach((item) => {
+    const targetLine = lines.find((line) => Math.abs(line.y - item.y) <= yTolerance);
+    if (targetLine) {
+      targetLine.items.push(item);
+      return;
+    }
+
+    lines.push({ y: item.y, items: [item] });
+  });
+
+  return lines
+    .sort((a, b) => b.y - a.y)
+    .map((line) => ({
+      ...line,
+      items: line.items.sort((a, b) => a.x - b.x),
+    }));
+}
+
+function getGroupedPdfLineText(line: GroupedPdfLine): string {
+  return line.items
+    .map((item) => item.text)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function detectPdfColumns(lines: GroupedPdfLine[]): PdfColumns | null {
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    const text = getGroupedPdfLineText(line);
+    const normalized = normalizeHeader(text);
+
+    const isHeader = normalized.includes('historico')
+      && normalized.includes('data')
+      && (normalized.includes('lancamentos') || normalized.includes('cidade'));
+
+    if (!isHeader) {
+      continue;
+    }
+
+    const historyItem = line.items.find((item) => normalizeHeader(item.text).includes('historico'));
+    const cityItem = line.items.find((item) => normalizeHeader(item.text).includes('cidade'));
+    const moneyItems = line.items.filter((item) => item.text.includes('$'));
+    const rsX = moneyItems.length > 0
+      ? Math.max(...moneyItems.map((item) => item.x))
+      : Math.max(...line.items.map((item) => item.x));
+
+    if (!historyItem) {
+      continue;
+    }
+
+    return {
+      headerLineIndex: i,
+      historyX: historyItem.x,
+      cityX: cityItem ? cityItem.x : null,
+      rsX,
+    };
+  }
+
+  return null;
+}
+
+function extractHistoryFromLine(line: GroupedPdfLine, columns: PdfColumns): string {
+  const historyEndX = columns.cityX ?? (columns.rsX - 120);
+  const raw = line.items
+    .filter((item) => item.x >= columns.historyX - 8 && item.x < historyEndX - 8)
+    .map((item) => item.text)
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  return raw.replace(/^\d{2}[\/-]\d{2}(?:[\/-](?:\d{2}|\d{4}))?\s*/, '').trim();
+}
+
+function extractAmountFromRsColumn(line: GroupedPdfLine, columns: PdfColumns): RsAmountMatch | null {
+  const amountCandidates = line.items
+    .filter((item) => item.x >= columns.rsX - 45)
+    .map((item) => ({ item, amount: parseAmount(item.text) }))
+    .filter((entry) => entry.amount !== null) as Array<{ item: PositionedPdfItem; amount: number }>;
+
+  if (amountCandidates.length === 0) {
+    return null;
+  }
+
+  const selected = amountCandidates.sort((a, b) => b.item.x - a.item.x)[0];
+  return {
+    amount: selected.amount,
+    rawValue: selected.item.text,
+    x: selected.item.x,
+  };
+}
+
+function parsePdfTableRows(lines: GroupedPdfLine[]): ParsedImportRow[] {
+  const columns = detectPdfColumns(lines);
+  if (!columns) {
+    return [];
+  }
+
+  const rows: ParsedImportRow[] = [];
+
+  for (let i = columns.headerLineIndex + 1; i < lines.length; i += 1) {
+    const line = lines[i];
+    const lineText = getGroupedPdfLineText(line);
+    const dateMatch = lineText.match(/\b\d{2}[\/-]\d{2}(?:[\/-](?:\d{2}|\d{4}))?\b/);
+    const historyText = extractHistoryFromLine(line, columns);
+
+    if (!dateMatch) {
+      if (historyText && rows.length > 0 && !isLikelySummaryLine(historyText)) {
+        const last = rows[rows.length - 1];
+        last.description = `${last.description} ${historyText}`.replace(/\s+/g, ' ').trim();
+      }
+      continue;
+    }
+
+    const date = parseDateToIso(dateMatch[0]);
+    const amountMatch = extractAmountFromRsColumn(line, columns);
+
+    if (!date || !amountMatch) {
+      continue;
+    }
+
+    if (!historyText || isLikelySummaryLine(historyText)) {
+      continue;
+    }
+
+    rows.push({
+      date,
+      description: historyText,
+      amount: amountMatch.amount,
+      paymentType: amountMatch.amount < 0 ? 'DEBIT' : 'CREDIT',
+      status: 'PAID',
+      notes: 'PDF import',
+      debugInfo: `R$=${amountMatch.rawValue} @x=${Math.round(amountMatch.x)}`,
+    });
+  }
+
+  return rows;
+}
+
+function isLikelySummaryLine(line: string): boolean {
+  const normalized = normalizeHeader(line);
+
+  if (!normalized) return true;
+
+  const summaryTokens = [
+    'totaldafatura',
+    'valorfatura',
+    'valortotal',
+    'subtotal',
+    'pagamentominimo',
+    'vencimento',
+    'encargos',
+    'limite',
+    'disponivel',
+    'saldoanterior',
+    'saldodevedor',
+    'resumo',
+    'demonstrativo',
+    'fatura',
+  ];
+
+  return summaryTokens.some((token) => normalized.includes(token));
+}
+
+function parsePdfLine(line: string): ParsedPdfLine | null {
+  const dateMatch = line.match(/\b\d{2}[\/-]\d{2}(?:[\/-](?:\d{2}|\d{4}))?\b/);
+  const amountMatches = line.match(/-?\d{1,3}(?:\.\d{3})*,\d{2}|-?\d+\.\d{2}/g);
+
+  if (!dateMatch || !amountMatches || amountMatches.length === 0) {
+    return null;
+  }
+
+  const date = parseDateToIso(dateMatch[0]);
+  const amountText = amountMatches[amountMatches.length - 1];
+  const amount = parseAmount(amountText);
+
+  if (!date || amount === null) {
+    return null;
+  }
+
+  const description = line.replace(dateMatch[0], ' ');
+  const amountStart = description.lastIndexOf(amountText);
+  const cleanDescription = (amountStart >= 0
+    ? `${description.slice(0, amountStart)} ${description.slice(amountStart + amountText.length)}`
+    : description)
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (!cleanDescription || isLikelySummaryLine(cleanDescription)) {
+    return null;
+  }
+
+  return {
+    date,
+    amount,
+    description: cleanDescription,
+  };
 }
 
 function parsePdfLines(lines: string[]): ParsedImportRow[] {
   const rows: ParsedImportRow[] = [];
+  const seen = new Set<string>();
 
   lines.forEach((line) => {
-    const dateMatch = line.match(/\b\d{2}[\/-]\d{2}[\/-]\d{4}\b/);
-    const amountMatches = line.match(/-?\d{1,3}(?:\.\d{3})*,\d{2}|-?\d+\.\d{2}/g);
-
-    if (!dateMatch || !amountMatches || amountMatches.length === 0) {
+    const parsed = parsePdfLine(line);
+    if (!parsed) {
       return;
     }
 
-    const date = parseDateToIso(dateMatch[0]);
-    const amount = parseAmount(amountMatches[amountMatches.length - 1]);
-
-    if (!date || amount === null) {
+    const dedupKey = buildTransactionKey(parsed.date, parsed.description, parsed.amount);
+    if (seen.has(dedupKey)) {
       return;
     }
-
-    const amountText = amountMatches[amountMatches.length - 1];
-    const description = line
-      .replace(dateMatch[0], '')
-      .replace(amountText, '')
-      .replace(/\s+/g, ' ')
-      .trim();
+    seen.add(dedupKey);
 
     rows.push({
-      date,
-      description: description || 'Transacao importada de PDF',
-      amount,
-      paymentType: amount < 0 ? 'DEBIT' : 'CREDIT',
+      date: parsed.date,
+      description: parsed.description,
+      amount: parsed.amount,
+      paymentType: parsed.amount < 0 ? 'DEBIT' : 'CREDIT',
       status: 'PAID',
+      notes: 'PDF import',
+      debugInfo: 'fallback-regex',
     });
   });
 
@@ -284,6 +554,7 @@ async function parsePdfFile(file: File): Promise<ParsedImportRow[]> {
   const loadingTask = getDocument({ data });
   const pdf = await loadingTask.promise;
 
+  const tableRows: ParsedImportRow[] = [];
   const allLines: string[] = [];
 
   for (let pageNum = 1; pageNum <= pdf.numPages; pageNum += 1) {
@@ -298,8 +569,21 @@ async function parsePdfFile(file: File): Promise<ParsedImportRow[]> {
           'transform' in item,
       )
       .map((item) => item as PdfTextItem);
+
+    const positionedItems = toPositionedPdfItems(items);
+    const groupedLines = groupPositionedPdfItemsByLine(positionedItems);
+    tableRows.push(...parsePdfTableRows(groupedLines));
+
     const lines = extractLinesFromPdfItems(items);
     allLines.push(...lines);
+  }
+
+  if (tableRows.length > 0) {
+    const dedupRows = new Map<string, ParsedImportRow>();
+    tableRows.forEach((row) => {
+      dedupRows.set(buildTransactionKey(row.date, row.description, row.amount), row);
+    });
+    return [...dedupRows.values()];
   }
 
   return parsePdfLines(allLines);
@@ -315,7 +599,6 @@ export function CsvImportModal({
   isImporting,
 }: CsvImportModalProps) {
   const { settings } = useSettings();
-  const { formatCurrency } = useFormatters();
   const messages = getTransactionMessages(settings.locale);
   const [fileName, setFileName] = useState<string>('');
   const [format, setFormat] = useState<ImportFormat>('unknown');
@@ -323,7 +606,9 @@ export function CsvImportModal({
   const [previewRows, setPreviewRows] = useState<PreviewRow[]>([]);
   const [defaultAccountId, setDefaultAccountId] = useState<string>('');
   const [defaultCategoryId, setDefaultCategoryId] = useState<string>('');
+  const [importPaymentKind, setImportPaymentKind] = useState<ImportPaymentKind>('');
   const [replaceDuplicates, setReplaceDuplicates] = useState(false);
+  const [showPdfDiagnostics, setShowPdfDiagnostics] = useState(false);
 
   const existingKeys = useMemo(() => {
     const keys = new Set<string>();
@@ -351,7 +636,9 @@ export function CsvImportModal({
     setFormat('unknown');
     setRawRows([]);
     setPreviewRows([]);
+    setImportPaymentKind('');
     setReplaceDuplicates(false);
+    setShowPdfDiagnostics(false);
   };
 
   const handleClose = () => {
@@ -359,14 +646,63 @@ export function CsvImportModal({
     onClose();
   };
 
-  const rebuildPreview = (rows: ParsedImportRow[], accountId: string, categoryId: string) => {
+  const rebuildPreview = (
+    rows: ParsedImportRow[],
+    accountId: string,
+    categoryId: string,
+    selectedPaymentKind: ImportPaymentKind,
+  ) => {
     const nextPreview: PreviewRow[] = rows.map((row, idx) => {
+      const normalizedDate = parseDateToIso(row.date);
+      const normalizedDescription = row.description.trim();
+      const normalizedAmount = Number(row.amount);
+
+      if (!normalizedDate) {
+        return {
+          index: idx + 1,
+          valid: false,
+          duplicate: false,
+          reason: messages.csv.invalidDate,
+          parsed: row,
+        };
+      }
+
+      if (!normalizedDescription) {
+        return {
+          index: idx + 1,
+          valid: false,
+          duplicate: false,
+          reason: messages.csv.invalidDescription,
+          parsed: row,
+        };
+      }
+
+      if (!Number.isFinite(normalizedAmount)) {
+        return {
+          index: idx + 1,
+          valid: false,
+          duplicate: false,
+          reason: messages.csv.invalidAmount,
+          parsed: row,
+        };
+      }
+
       if (!accountId) {
         return {
           index: idx + 1,
           valid: false,
           duplicate: false,
           reason: messages.csv.selectDestinationAccount,
+          parsed: row,
+        };
+      }
+
+      if (!selectedPaymentKind) {
+        return {
+          index: idx + 1,
+          valid: false,
+          duplicate: false,
+          reason: messages.csv.selectTransactionType,
           parsed: row,
         };
       }
@@ -388,10 +724,10 @@ export function CsvImportModal({
       const mapped: CreateTransactionDto = {
         accountId,
         categoryId: resolvedCategoryId,
-        date: row.date,
-        amount: row.amount,
-        description: row.description,
-        paymentType: row.paymentType,
+        date: normalizedDate,
+        amount: normalizedAmount,
+        description: normalizedDescription,
+        paymentType: selectedPaymentKind,
         status: row.status,
         notes: row.notes,
       };
@@ -414,12 +750,40 @@ export function CsvImportModal({
 
   const handleAccountChange = (value: string) => {
     setDefaultAccountId(value);
-    rebuildPreview(rawRows, value, defaultCategoryId);
+    rebuildPreview(rawRows, value, defaultCategoryId, importPaymentKind);
   };
 
   const handleCategoryChange = (value: string) => {
     setDefaultCategoryId(value);
-    rebuildPreview(rawRows, defaultAccountId, value);
+    rebuildPreview(rawRows, defaultAccountId, value, importPaymentKind);
+  };
+
+  const handlePaymentKindChange = (value: ImportPaymentKind) => {
+    setImportPaymentKind(value);
+    rebuildPreview(rawRows, defaultAccountId, defaultCategoryId, value);
+  };
+
+  const handleParsedRowFieldChange = (
+    index: number,
+    field: 'date' | 'description' | 'amount',
+    value: string,
+  ) => {
+    const nextRows = [...rawRows];
+    const current = nextRows[index];
+    if (!current) return;
+
+    if (field === 'amount') {
+      const parsedAmount = parseAmount(value);
+      current.amount = parsedAmount ?? Number.NaN;
+    } else if (field === 'description') {
+      current.description = value;
+    } else {
+      current.date = value;
+    }
+
+    nextRows[index] = { ...current };
+    setRawRows(nextRows);
+    rebuildPreview(nextRows, defaultAccountId, defaultCategoryId, importPaymentKind);
   };
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -429,6 +793,9 @@ export function CsvImportModal({
     setFileName(file.name);
     const detected = detectFormat(file);
     setFormat(detected);
+    if (detected !== 'pdf') {
+      setShowPdfDiagnostics(false);
+    }
 
     let parsed: ParsedImportRow[] = [];
 
@@ -443,7 +810,7 @@ export function CsvImportModal({
     }
 
     setRawRows(parsed);
-    rebuildPreview(parsed, defaultAccountId, defaultCategoryId);
+    rebuildPreview(parsed, defaultAccountId, defaultCategoryId, importPaymentKind);
   };
 
   const handleImport = async () => {
@@ -499,6 +866,19 @@ export function CsvImportModal({
               ))}
             </select>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{messages.csv.transactionType}</label>
+            <select
+              value={importPaymentKind}
+              onChange={(e) => handlePaymentKindChange(e.target.value as ImportPaymentKind)}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            >
+              <option value="">{messages.csv.transactionTypePlaceholder}</option>
+              <option value="DEBIT">{messages.csv.debit}</option>
+              <option value="CREDIT">{messages.csv.credit}</option>
+            </select>
+          </div>
         </div>
 
         <div className="border border-dashed border-gray-300 rounded-xl p-4 bg-gray-50">
@@ -544,6 +924,17 @@ export function CsvImportModal({
               {messages.csv.importDuplicates}
             </label>
 
+            {format === 'pdf' && (
+              <label className="flex items-center gap-2 text-sm text-gray-700">
+                <input
+                  type="checkbox"
+                  checked={showPdfDiagnostics}
+                  onChange={(e) => setShowPdfDiagnostics(e.target.checked)}
+                />
+                {messages.csv.showPdfDiagnostics}
+              </label>
+            )}
+
             <div className="max-h-72 overflow-auto border border-gray-200 rounded-lg">
               <table className="w-full text-sm">
                 <thead className="bg-gray-50 sticky top-0">
@@ -553,6 +944,7 @@ export function CsvImportModal({
                     <th className="text-left p-2">{messages.csv.columns.description}</th>
                     <th className="text-right p-2">{messages.csv.columns.amount}</th>
                     <th className="text-left p-2">{messages.csv.columns.status}</th>
+                    {showPdfDiagnostics && <th className="text-left p-2">{messages.csv.columns.diagnostics}</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -566,12 +958,32 @@ export function CsvImportModal({
                     return (
                       <tr key={row.index} className="border-t border-gray-100">
                         <td className="p-2">{row.index}</td>
-                        <td className="p-2">{row.parsed?.date || '-'}</td>
-                        <td className="p-2">{row.parsed?.description || '-'}</td>
+                        <td className="p-2">
+                          <input
+                            type="text"
+                            value={row.parsed?.date || ''}
+                            onChange={(e) => handleParsedRowFieldChange(row.index - 1, 'date', e.target.value)}
+                            className="w-28 rounded border border-gray-200 px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            placeholder="dd/mm/aaaa"
+                          />
+                        </td>
+                        <td className="p-2">
+                          <input
+                            type="text"
+                            value={row.parsed?.description || ''}
+                            onChange={(e) => handleParsedRowFieldChange(row.index - 1, 'description', e.target.value)}
+                            className="w-full min-w-48 rounded border border-gray-200 px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            placeholder={messages.csv.columns.description}
+                          />
+                        </td>
                         <td className="p-2 text-right">
-                          {row.parsed
-                            ? formatCurrency(row.parsed.amount)
-                            : '-'}
+                          <input
+                            type="text"
+                            value={row.parsed && Number.isFinite(row.parsed.amount) ? row.parsed.amount.toFixed(2) : ''}
+                            onChange={(e) => handleParsedRowFieldChange(row.index - 1, 'amount', e.target.value)}
+                            className="w-28 rounded border border-gray-200 px-2 py-1 text-xs text-right focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            placeholder="0,00"
+                          />
                         </td>
                         <td className="p-2">
                           <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${statusClass}`}>
@@ -579,6 +991,9 @@ export function CsvImportModal({
                             {!row.valid ? row.reason : row.duplicate ? messages.csv.duplicate : messages.csv.ok}
                           </span>
                         </td>
+                        {showPdfDiagnostics && (
+                          <td className="p-2 text-xs text-gray-600 whitespace-nowrap">{row.parsed?.debugInfo || '-'}</td>
+                        )}
                       </tr>
                     );
                   })}

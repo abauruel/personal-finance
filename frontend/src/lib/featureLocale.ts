@@ -85,12 +85,17 @@ type TransactionMessages = {
     destinationAccountPlaceholder: string;
     defaultCategory: string;
     defaultCategoryPlaceholder: string;
+    transactionType: string;
+    transactionTypePlaceholder: string;
+    debit: string;
+    credit: string;
     selectFile: string;
     expectedColumns: string;
     read: string;
     valid: string;
     duplicates: string;
     importDuplicates: string;
+    showPdfDiagnostics: string;
     duplicate: string;
     ok: string;
     cancel: string;
@@ -98,12 +103,17 @@ type TransactionMessages = {
     import: string;
     selectDestinationAccount: string;
     selectDefaultCategory: string;
+    selectTransactionType: string;
+    invalidDate: string;
+    invalidDescription: string;
+    invalidAmount: string;
     columns: {
       row: string;
       date: string;
       description: string;
       amount: string;
       status: string;
+      diagnostics: string;
     };
   };
 };
@@ -245,12 +255,17 @@ const transactionMessagesPt: TransactionMessages = {
     destinationAccountPlaceholder: 'Selecione uma conta',
     defaultCategory: 'Categoria padrão',
     defaultCategoryPlaceholder: 'Selecione uma categoria',
+    transactionType: 'Tipo das transações',
+    transactionTypePlaceholder: 'Selecione débito ou crédito',
+    debit: 'Débito',
+    credit: 'Crédito',
     selectFile: 'Selecionar arquivo CSV',
     expectedColumns: 'Colunas esperadas: data, descricao, valor (opcionais: tipo, status, categoria, obs).',
     read: 'Lidas',
     valid: 'Válidas',
     duplicates: 'Duplicadas',
     importDuplicates: 'Importar também linhas duplicadas',
+    showPdfDiagnostics: 'Mostrar diagnostico do parser PDF',
     duplicate: 'Duplicada',
     ok: 'OK',
     cancel: 'Cancelar',
@@ -258,12 +273,17 @@ const transactionMessagesPt: TransactionMessages = {
     import: 'Importar',
     selectDestinationAccount: 'Selecione uma conta de destino',
     selectDefaultCategory: 'Selecione uma categoria padrão',
+    selectTransactionType: 'Selecione se as transações são débito ou crédito',
+    invalidDate: 'Data inválida. Corrija antes de importar.',
+    invalidDescription: 'Descrição inválida. Corrija antes de importar.',
+    invalidAmount: 'Valor inválido. Corrija antes de importar.',
     columns: {
       row: '#',
       date: 'Data',
       description: 'Descrição',
       amount: 'Valor',
       status: 'Status',
+      diagnostics: 'Diagnostico',
     },
   },
 };
@@ -353,12 +373,17 @@ const transactionMessagesEn: TransactionMessages = {
     destinationAccountPlaceholder: 'Select an account',
     defaultCategory: 'Default category',
     defaultCategoryPlaceholder: 'Select a category',
+    transactionType: 'Transaction type',
+    transactionTypePlaceholder: 'Select debit or credit',
+    debit: 'Debit',
+    credit: 'Credit',
     selectFile: 'Select CSV file',
     expectedColumns: 'Expected columns: date, description, amount (optional: type, status, category, notes).',
     read: 'Read',
     valid: 'Valid',
     duplicates: 'Duplicates',
     importDuplicates: 'Import duplicate rows too',
+    showPdfDiagnostics: 'Show PDF parser diagnostics',
     duplicate: 'Duplicate',
     ok: 'OK',
     cancel: 'Cancel',
@@ -366,12 +391,17 @@ const transactionMessagesEn: TransactionMessages = {
     import: 'Import',
     selectDestinationAccount: 'Select a destination account',
     selectDefaultCategory: 'Select a default category',
+    selectTransactionType: 'Select whether transactions are debit or credit',
+    invalidDate: 'Invalid date. Fix it before importing.',
+    invalidDescription: 'Invalid description. Fix it before importing.',
+    invalidAmount: 'Invalid amount. Fix it before importing.',
     columns: {
       row: '#',
       date: 'Date',
       description: 'Description',
       amount: 'Amount',
       status: 'Status',
+      diagnostics: 'Diagnostics',
     },
   },
 };
