@@ -4,6 +4,7 @@ type TransactionMessages = {
   pageTitle: string;
   pageSubtitle: string;
   importCsv: string;
+  importFile: string;
   filters: string;
   newTransaction: string;
   totalTransactions: string;
@@ -79,6 +80,7 @@ type TransactionMessages = {
   };
   csv: {
     title: string;
+    supportedFormats: string;
     destinationAccount: string;
     destinationAccountPlaceholder: string;
     defaultCategory: string;
@@ -162,6 +164,7 @@ const transactionMessagesPt: TransactionMessages = {
   pageTitle: 'Transações',
   pageSubtitle: 'Gerencie todas as suas transações financeiras',
   importCsv: 'Importar CSV',
+  importFile: 'Importar Arquivo',
   filters: 'Filtros',
   newTransaction: 'Nova Transação',
   totalTransactions: 'Total de Transações',
@@ -175,7 +178,7 @@ const transactionMessagesPt: TransactionMessages = {
   deleteSuccess: 'Transação excluída com sucesso!',
   deleteError: 'Erro ao excluir transação',
   importSuccess: 'Importação concluída com sucesso!',
-  importError: 'Erro ao importar CSV',
+  importError: 'Erro ao importar arquivo',
   table: {
     loading: 'Carregando transações...',
     empty: 'Nenhuma transação encontrada',
@@ -237,6 +240,7 @@ const transactionMessagesPt: TransactionMessages = {
   },
   csv: {
     title: 'Importar CSV',
+    supportedFormats: 'Formatos suportados: CSV, OFX e PDF',
     destinationAccount: 'Conta de destino',
     destinationAccountPlaceholder: 'Selecione uma conta',
     defaultCategory: 'Categoria padrão',
@@ -268,6 +272,7 @@ const transactionMessagesEn: TransactionMessages = {
   pageTitle: 'Transactions',
   pageSubtitle: 'Manage all of your financial transactions',
   importCsv: 'Import CSV',
+  importFile: 'Import File',
   filters: 'Filters',
   newTransaction: 'New Transaction',
   totalTransactions: 'Total Transactions',
@@ -281,7 +286,7 @@ const transactionMessagesEn: TransactionMessages = {
   deleteSuccess: 'Transaction deleted successfully!',
   deleteError: 'Error deleting transaction',
   importSuccess: 'Import completed successfully!',
-  importError: 'Error importing CSV',
+  importError: 'Error importing file',
   table: {
     loading: 'Loading transactions...',
     empty: 'No transactions found',
@@ -343,6 +348,7 @@ const transactionMessagesEn: TransactionMessages = {
   },
   csv: {
     title: 'Import CSV',
+    supportedFormats: 'Supported formats: CSV, OFX and PDF',
     destinationAccount: 'Destination account',
     destinationAccountPlaceholder: 'Select an account',
     defaultCategory: 'Default category',
