@@ -114,7 +114,21 @@ export function RecurringModal({
         endDate: recurring.endDate ? new Date(recurring.endDate).toISOString().split('T')[0] : '',
         active: recurring.active,
       });
+      return;
     }
+
+    reset({
+      categoryId: '',
+      accountId: '',
+      description: '',
+      amount: 0,
+      frequency: 'MONTHLY',
+      paymentType: 'DEBIT',
+      dayOfMonth: 1,
+      startDate: new Date().toISOString().split('T')[0],
+      endDate: '',
+      active: true,
+    });
   }, [recurring, reset]);
 
   const frequency = watch('frequency');

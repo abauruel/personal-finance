@@ -36,11 +36,16 @@ export default function RecurringPage() {
   };
 
   const handleSubmit = async (data: CreateRecurringDto | UpdateRecurringDto) => {
+    const payload = {
+      ...data,
+      endDate: data.endDate || undefined,
+    };
+
     try {
       if (editingRecurring) {
-        await updateRecurring({ id: editingRecurring.id, data });
+        await updateRecurring({ id: editingRecurring.id, data: payload });
       } else {
-        await createRecurring(data as CreateRecurringDto);
+        await createRecurring(payload as CreateRecurringDto);
       }
       handleCloseModal();
     } catch (error) {
@@ -147,8 +152,8 @@ export default function RecurringPage() {
         <button
           onClick={() => setFilter('all')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition ${filter === 'all'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+            ? 'border-primary text-primary'
+            : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
         >
           Todas ({recurrings.length})
@@ -156,8 +161,8 @@ export default function RecurringPage() {
         <button
           onClick={() => setFilter('active')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition ${filter === 'active'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+            ? 'border-primary text-primary'
+            : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
         >
           Ativas ({activeCount})
@@ -165,8 +170,8 @@ export default function RecurringPage() {
         <button
           onClick={() => setFilter('inactive')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition ${filter === 'inactive'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+            ? 'border-primary text-primary'
+            : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
         >
           Inativas ({inactiveCount})
