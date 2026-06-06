@@ -141,18 +141,18 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
   return (
     <div className="bg-white rounded-2xl p-6 shadow-card">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 sm:gap-4 mb-5 sm:mb-6">
         <h3 className="text-lg font-semibold text-gray-900">{messages.recentTransactions}</h3>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full xl:w-auto">
           {/* Search */}
-          <div className="relative">
+          <div className="relative w-full sm:flex-1 xl:w-auto">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
               placeholder={messages.searchTransactions}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full sm:w-auto pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="w-full sm:min-w-55 xl:min-w-65 pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
           {/* Filter Button */}
@@ -288,7 +288,7 @@ export function RecentTransactionsTable({ transactions, onFilter }: RecentTransa
             <div key={transaction.id} className="p-4 bg-gray-50 rounded-xl space-y-3">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3 flex-1">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-lg flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-lg shrink-0">
                     {transaction.category.icon}
                   </div>
                   <div className="min-w-0 flex-1">

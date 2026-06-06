@@ -50,9 +50,9 @@ export function CashFlowChart({ data, period = 'This Year', onPeriodChange }: Ca
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-card w-full">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-card w-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
         <h3 className="text-lg font-semibold text-gray-900">{messages.cashFlowTitle}</h3>
         <div className="relative">
           <button
@@ -82,7 +82,7 @@ export function CashFlowChart({ data, period = 'This Year', onPeriodChange }: Ca
       </div>
 
       {/* Chart */}
-      <div className="h-80">
+      <div className="h-64 sm:h-80">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}

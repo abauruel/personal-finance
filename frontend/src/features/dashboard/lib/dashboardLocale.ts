@@ -5,6 +5,9 @@ type DashboardMessages = {
   dashboardLoadErrorMessage: string;
   income: string;
   expense: string;
+  categorySummaryTitle: string;
+  categorySummaryEmpty: string;
+  categorySummaryOfTotal: string;
   myBalance: string;
   cashFlowTitle: string;
   noChartData: string;
@@ -73,6 +76,9 @@ export const DASHBOARD_MESSAGES: Record<Locale, DashboardMessages> = {
     dashboardLoadErrorMessage: 'Nao foi possivel carregar os dados do dashboard. Verifique sua conexao e tente novamente.',
     income: 'Receitas',
     expense: 'Despesas',
+    categorySummaryTitle: 'Resumo por categoria',
+    categorySummaryEmpty: 'Nenhuma despesa por categoria encontrada',
+    categorySummaryOfTotal: 'do total de gastos',
     myBalance: 'Meu saldo',
     cashFlowTitle: 'Entradas e saidas de caixa',
     noChartData: 'Nenhum dado de grafico disponivel',
@@ -136,6 +142,9 @@ export const DASHBOARD_MESSAGES: Record<Locale, DashboardMessages> = {
     dashboardLoadErrorMessage: "We couldn't load your dashboard data. Please check your connection and try again.",
     income: 'Income',
     expense: 'Expenses',
+    categorySummaryTitle: 'Category summary',
+    categorySummaryEmpty: 'No category spending found',
+    categorySummaryOfTotal: 'of total spending',
     myBalance: 'My balance',
     cashFlowTitle: 'Cash in and cash out',
     noChartData: 'No chart data available',
@@ -199,6 +208,9 @@ export const DASHBOARD_MESSAGES: Record<Locale, DashboardMessages> = {
     dashboardLoadErrorMessage: 'No se pudieron cargar los datos del panel. Verifica tu conexion e intentalo de nuevo.',
     income: 'Ingresos',
     expense: 'Gastos',
+    categorySummaryTitle: 'Resumen por categoria',
+    categorySummaryEmpty: 'No se encontraron gastos por categoria',
+    categorySummaryOfTotal: 'del gasto total',
     myBalance: 'Mi saldo',
     cashFlowTitle: 'Entradas y salidas de efectivo',
     noChartData: 'No hay datos de grafico disponibles',
@@ -262,6 +274,9 @@ export const DASHBOARD_MESSAGES: Record<Locale, DashboardMessages> = {
     dashboardLoadErrorMessage: 'Impossible de charger les donnees du tableau de bord. Verifiez votre connexion et reessayez.',
     income: 'Revenus',
     expense: 'Depenses',
+    categorySummaryTitle: 'Resume par categorie',
+    categorySummaryEmpty: 'Aucune depense par categorie trouvee',
+    categorySummaryOfTotal: 'du total des depenses',
     myBalance: 'Mon solde',
     cashFlowTitle: 'Entrees et sorties de tresorerie',
     noChartData: 'Aucune donnee de graphique disponible',
@@ -325,6 +340,9 @@ export const DASHBOARD_MESSAGES: Record<Locale, DashboardMessages> = {
     dashboardLoadErrorMessage: 'Die Dashboard-Daten konnten nicht geladen werden. Bitte pruefe deine Verbindung und versuche es erneut.',
     income: 'Einnahmen',
     expense: 'Ausgaben',
+    categorySummaryTitle: 'Kategorieubersicht',
+    categorySummaryEmpty: 'Keine Ausgaben nach Kategorie gefunden',
+    categorySummaryOfTotal: 'der Gesamtausgaben',
     myBalance: 'Mein Kontostand',
     cashFlowTitle: 'Geldzufluss und Geldabfluss',
     noChartData: 'Keine Diagrammdaten verfuegbar',
@@ -388,6 +406,9 @@ export const DASHBOARD_MESSAGES: Record<Locale, DashboardMessages> = {
     dashboardLoadErrorMessage: 'Non e stato possibile caricare i dati della dashboard. Controlla la connessione e riprova.',
     income: 'Entrate',
     expense: 'Spese',
+    categorySummaryTitle: 'Riepilogo per categoria',
+    categorySummaryEmpty: 'Nessuna spesa per categoria trovata',
+    categorySummaryOfTotal: 'del totale spese',
     myBalance: 'Il mio saldo',
     cashFlowTitle: 'Entrate e uscite di cassa',
     noChartData: 'Nessun dato disponibile per il grafico',
@@ -451,6 +472,9 @@ export const DASHBOARD_MESSAGES: Record<Locale, DashboardMessages> = {
     dashboardLoadErrorMessage: 'ダッシュボードのデータを読み込めませんでした。接続を確認して再試行してください。',
     income: '収入',
     expense: '支出',
+    categorySummaryTitle: 'カテゴリ別サマリー',
+    categorySummaryEmpty: 'カテゴリ別の支出はありません',
+    categorySummaryOfTotal: '総支出に占める割合',
     myBalance: '残高',
     cashFlowTitle: '入出金',
     noChartData: 'グラフデータがありません',
@@ -514,6 +538,9 @@ export const DASHBOARD_MESSAGES: Record<Locale, DashboardMessages> = {
     dashboardLoadErrorMessage: '无法加载仪表板数据。请检查网络连接后重试。',
     income: '收入',
     expense: '支出',
+    categorySummaryTitle: '分类支出概览',
+    categorySummaryEmpty: '暂无分类支出数据',
+    categorySummaryOfTotal: '占总支出的',
     myBalance: '我的余额',
     cashFlowTitle: '现金流入与流出',
     noChartData: '暂无图表数据',

@@ -64,8 +64,10 @@ export interface DashboardStats {
 }
 
 export const dashboardApi = {
-  getStats: async (): Promise<DashboardStats> => {
-    const response = await api.get<DashboardStats>('/dashboard/stats');
+  getStats: async (params?: { month?: number; year?: number }): Promise<DashboardStats> => {
+    const response = await api.get<DashboardStats>('/dashboard/stats', {
+      params,
+    });
     return response.data;
   },
 };

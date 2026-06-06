@@ -39,20 +39,20 @@ export function QuickActionButtons({ onAction }: QuickActionButtonsProps) {
   ];
 
   return (
-    <div className="flex items-center justify-between gap-4 mt-6">
+    <div className="grid grid-cols-4 gap-2 sm:gap-4 mt-4 sm:mt-6">
       {actions.map((action) => (
         <button
           key={action.type}
           onClick={() => onAction?.(action.type)}
-          className="flex flex-col items-center gap-2 group"
+          className="flex flex-col items-center gap-1.5 sm:gap-2 group"
           aria-label={action.label}
         >
           <div
-            className={`w-14 h-14 rounded-full ${action.color} flex items-center justify-center transition-all group-hover:scale-105`}
+            className={`w-11 h-11 sm:w-14 sm:h-14 rounded-full ${action.color} flex items-center justify-center transition-all group-hover:scale-105`}
           >
-            <action.icon className={`w-6 h-6 ${action.iconColor}`} />
+            <action.icon className={`w-4 h-4 sm:w-6 sm:h-6 ${action.iconColor}`} />
           </div>
-          <span className="text-xs font-medium text-gray-700">{action.label}</span>
+          <span className="text-[11px] sm:text-xs font-medium text-gray-700 text-center leading-tight">{action.label}</span>
         </button>
       ))}
     </div>

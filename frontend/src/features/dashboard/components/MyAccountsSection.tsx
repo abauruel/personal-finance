@@ -60,9 +60,9 @@ export function MyAccountsSection({ accounts, onAddAccount, onAction }: MyAccoun
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-card h-full w-full flex flex-col">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-card h-full w-full flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
         <h3 className="text-lg font-semibold text-gray-900">{messages.myAccounts}</h3>
         <button
           onClick={onAddAccount}
@@ -94,17 +94,17 @@ export function MyAccountsSection({ accounts, onAddAccount, onAction }: MyAccoun
       ) : (
         <>
           {/* Accounts */}
-          <div className="flex-1 space-y-4 overflow-y-auto">
+          <div className="flex-1 space-y-3 sm:space-y-4 overflow-y-auto">
             {accounts.map((account) => (
               <div
                 key={account.id}
-                className="relative h-40 rounded-2xl p-6 text-white overflow-hidden cursor-pointer hover:scale-105 transition-transform"
+                className="relative h-32 sm:h-36 rounded-2xl p-4 sm:p-5 text-white overflow-hidden cursor-pointer transition-transform sm:hover:scale-[1.02]"
                 style={getCardGradient(account)}
               >
                 {/* Background Pattern */}
                 <div className="absolute inset-0 opacity-10">
-                  <div className="absolute top-5 right-5 w-32 h-32 rounded-full bg-white"></div>
-                  <div className="absolute bottom-5 left-5 w-24 h-24 rounded-full bg-white"></div>
+                  <div className="absolute top-4 right-4 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white"></div>
+                  <div className="absolute bottom-4 left-4 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white"></div>
                 </div>
 
                 {/* Content */}
@@ -113,26 +113,26 @@ export function MyAccountsSection({ accounts, onAddAccount, onAction }: MyAccoun
                   <div className="flex items-start justify-between">
                     <div>
                       <p className="text-xs opacity-80 mb-1">{getAccountTypeLabel(account.type)}</p>
-                      <p className="text-lg font-semibold">{account.name}</p>
+                      <p className="text-base sm:text-lg font-semibold truncate pr-2">{account.name}</p>
                     </div>
-                    <div className="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
-                      <Wallet className="w-5 h-5" />
+                    <div className="bg-white/20 p-1.5 sm:p-2 rounded-lg backdrop-blur-sm">
+                      <Wallet className="w-4 h-4 sm:w-5 sm:h-5" />
                     </div>
                   </div>
 
                   {/* Balance */}
                   <div>
                     <p className="text-xs opacity-80 mb-1">{messages.availableBalance}</p>
-                    <p className="text-2xl font-bold tracking-tight">{formatCurrency(account.balance)}</p>
+                    <p className="text-xl sm:text-2xl font-bold tracking-tight truncate">{formatCurrency(account.balance)}</p>
                   </div>
                 </div>
 
                 {/* Balance Indicator Icon */}
-                <div className="absolute bottom-6 right-6 opacity-40">
+                <div className="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 opacity-40">
                   {account.balance >= 0 ? (
-                    <TrendingUp className="w-6 h-6" />
+                    <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
                   ) : (
-                    <TrendingDown className="w-6 h-6" />
+                    <TrendingDown className="w-5 h-5 sm:w-6 sm:h-6" />
                   )}
                 </div>
               </div>
@@ -140,7 +140,7 @@ export function MyAccountsSection({ accounts, onAddAccount, onAction }: MyAccoun
           </div>
 
           {/* Quick Action Buttons */}
-          <div className="mt-6">
+          <div className="mt-4 sm:mt-6">
             <QuickActionButtons onAction={onAction} />
           </div>
         </>
