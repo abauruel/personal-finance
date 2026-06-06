@@ -5,12 +5,14 @@ interface CreateAccountData {
   name: string;
   type: 'CHECKING' | 'SAVINGS' | 'CREDIT_CARD';
   initialBalance?: number;
+  color?: string;
 }
 
 interface UpdateAccountData {
   name?: string;
   type?: 'CHECKING' | 'SAVINGS' | 'CREDIT_CARD';
   initialBalance?: number;
+  color?: string;
 }
 
 export function useAccounts() {

@@ -1,4 +1,11 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsHexColor,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateAccountDto {
   @IsNotEmpty()
@@ -12,4 +19,8 @@ export class CreateAccountDto {
   @IsOptional()
   @IsNumber()
   initialBalance?: number;
+
+  @IsOptional()
+  @IsHexColor()
+  color?: string;
 }

@@ -13,6 +13,7 @@ const buildAccountSchema = (nameRequired: string) => z.object({
   name: z.string().min(1, nameRequired),
   type: z.enum(['CHECKING', 'SAVINGS', 'CREDIT_CARD']),
   initialBalance: z.number().optional(),
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
 });
 
 type AccountFormData = z.infer<ReturnType<typeof buildAccountSchema>>;
@@ -24,6 +25,12 @@ interface AccountModalProps {
   account?: Account;
   isLoading?: boolean;
 }
+
+const accountTypeDefaultColors = {
+  CHECKING: '#3B82F6',
+  SAVINGS: '#22C55E',
+  CREDIT_CARD: '#F97316',
+} as const;
 
 export function AccountModal({
   isOpen,
@@ -41,6 +48,7 @@ export function AccountModal({
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<AccountFormData>({
     resolver: zodResolver(accountSchema),
@@ -48,6 +56,7 @@ export function AccountModal({
       name: account?.name || '',
       type: account?.type || 'CHECKING',
       initialBalance: account?.initialBalance || 0,
+      color: account?.color || '#3B82F6',
     },
   });
 
@@ -57,12 +66,14 @@ export function AccountModal({
         name: account.name,
         type: account.type,
         initialBalance: account.initialBalance,
+        color: account.color || '#3B82F6',
       });
     } else {
       reset({
         name: '',
         type: 'CHECKING',
         initialBalance: 0,
+        color: '#3B82F6',
       });
     }
   }, [account, reset]);
@@ -159,6 +170,32 @@ export function AccountModal({
                 ? messages.modal.editHint
                 : messages.modal.createHint}
             </p>
+          </div>
+
+          {/* Card Color */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Cor do Card
+            </label>
+            <div className="flex items-center gap-3">
+              <input
+                type="color"
+                {...register('color')}
+                className="h-11 w-14 cursor-pointer rounded border border-gray-300 bg-white p-1"
+              />
+              <div className="flex gap-2">
+                {Object.values(accountTypeDefaultColors).map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setValue('color', color, { shouldValidate: true })}
+                    className="h-7 w-7 rounded-full border border-gray-300"
+                    style={{ backgroundColor: color }}
+                    title={`Selecionar ${color}`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Actions */}

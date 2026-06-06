@@ -37,6 +37,7 @@ export interface DashboardStatsDto {
     id: string;
     name: string;
     type: string;
+    color: string;
     balance: number;
   }>;
 }

@@ -6,6 +6,19 @@ import type { CreateAccountDto, UpdateAccountDto } from './dto';
 export class AccountsService {
   constructor(private readonly prisma: PrismaService) { }
 
+  private getDefaultColor(type: 'CHECKING' | 'SAVINGS' | 'CREDIT_CARD') {
+    switch (type) {
+      case 'CHECKING':
+        return '#3B82F6';
+      case 'SAVINGS':
+        return '#22C55E';
+      case 'CREDIT_CARD':
+        return '#F97316';
+      default:
+        return '#3B82F6';
+    }
+  }
+
   async findAll(userId: string) {
     return this.prisma.account.findMany({
       where: { userId },
@@ -27,11 +40,14 @@ export class AccountsService {
 
   async create(userId: string, dto: CreateAccountDto) {
     const initialBalance = dto.initialBalance ?? 0;
+    const color = dto.color ?? this.getDefaultColor(dto.type);
+
     return this.prisma.account.create({
       data: {
         userId,
         name: dto.name,
         type: dto.type,
+        color,
         initialBalance,
         currentBalance: initialBalance,
       },

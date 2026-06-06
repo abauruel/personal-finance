@@ -9,13 +9,21 @@ const accountSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   type: z.enum(['CHECKING', 'SAVINGS', 'CREDIT_CARD']),
   initialBalance: z.string().optional(),
+  color: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Cor inválida'),
 });
 
 type AccountFormData = z.infer<typeof accountSchema>;
 
+type AccountSubmitData = {
+  name: string;
+  type: 'CHECKING' | 'SAVINGS' | 'CREDIT_CARD';
+  initialBalance?: number;
+  color: string;
+};
+
 interface AccountFormProps {
   account?: Account;
-  onSubmit: (data: AccountFormData) => Promise<void>;
+  onSubmit: (data: AccountSubmitData) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
 }
@@ -26,10 +34,17 @@ const accountTypeLabels = {
   CREDIT_CARD: 'Cartão de Crédito',
 };
 
+const accountTypeDefaultColors = {
+  CHECKING: '#3B82F6',
+  SAVINGS: '#22C55E',
+  CREDIT_CARD: '#F97316',
+} as const;
+
 export function AccountForm({ account, onSubmit, onCancel, isLoading = false }: AccountFormProps) {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<AccountFormData>({
     resolver: zodResolver(accountSchema),
@@ -38,10 +53,12 @@ export function AccountForm({ account, onSubmit, onCancel, isLoading = false }: 
         name: account.name,
         type: account.type,
         initialBalance: String(account.initialBalance || 0),
+        color: account.color || '#3B82F6',
       }
       : {
         type: 'CHECKING',
         initialBalance: '0',
+        color: '#3B82F6',
       },
   });
 
@@ -50,7 +67,7 @@ export function AccountForm({ account, onSubmit, onCancel, isLoading = false }: 
       ...data,
       initialBalance: data.initialBalance ? parseFloat(data.initialBalance) : undefined,
     };
-    await onSubmit(transformedData as any);
+    await onSubmit(transformedData);
   };
 
   return (
@@ -101,6 +118,35 @@ export function AccountForm({ account, onSubmit, onCancel, isLoading = false }: 
           error={errors.initialBalance?.message}
           {...register('initialBalance')}
         />
+      </div>
+
+      <div>
+        <label htmlFor="color" className="block text-sm font-medium text-gray-700 mb-2">
+          Cor do Card
+        </label>
+        <div className="flex items-center gap-3">
+          <input
+            id="color"
+            type="color"
+            className="h-11 w-14 cursor-pointer rounded border border-gray-300 bg-white p-1"
+            {...register('color')}
+          />
+          <div className="flex gap-2">
+            {Object.values(accountTypeDefaultColors).map((color) => (
+              <button
+                key={color}
+                type="button"
+                onClick={() => setValue('color', color, { shouldValidate: true })}
+                className="h-7 w-7 rounded-full border border-gray-300"
+                style={{ backgroundColor: color }}
+                title={`Selecionar ${color}`}
+              />
+            ))}
+          </div>
+        </div>
+        {errors.color && (
+          <p className="mt-1 text-sm text-red-600">{errors.color.message}</p>
+        )}
       </div>
 
       <div className="flex gap-3 pt-4">

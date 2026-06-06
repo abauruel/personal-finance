@@ -16,19 +16,43 @@ export function MyAccountsSection({ accounts, onAddAccount, onAction }: MyAccoun
   const { formatCurrency } = useFormatters();
   const messages = getDashboardMessages(settings.locale);
 
-  const getAccountTypeColor = (type: string) => {
+  const getDefaultColorByType = (type: string) => {
     switch (type.toUpperCase()) {
       case 'CHECKING':
-        return 'from-blue-500 to-blue-600';
+        return '#3B82F6';
       case 'SAVINGS':
-        return 'from-green-500 to-green-600';
+        return '#22C55E';
       case 'INVESTMENT':
-        return 'from-purple-500 to-purple-600';
+        return '#A855F7';
       case 'CREDIT':
-        return 'from-orange-500 to-orange-600';
+      case 'CREDIT_CARD':
+        return '#F97316';
       default:
-        return 'from-primary to-primary-dark';
+        return '#3B82F6';
     }
+  };
+
+  const darkenHexColor = (hexColor: string, amount = 30) => {
+    const hex = hexColor.replace('#', '');
+    const parsed = Number.parseInt(hex, 16);
+
+    if (Number.isNaN(parsed)) {
+      return '#1D4ED8';
+    }
+
+    const r = Math.max(0, (parsed >> 16) - amount);
+    const g = Math.max(0, ((parsed >> 8) & 0x00ff) - amount);
+    const b = Math.max(0, (parsed & 0x0000ff) - amount);
+
+    return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
+  };
+
+  const getCardGradient = (account: AccountCard) => {
+    const baseColor = account.color || getDefaultColorByType(account.type);
+    const darkColor = darkenHexColor(baseColor);
+    return {
+      backgroundImage: `linear-gradient(135deg, ${baseColor}, ${darkColor})`,
+    };
   };
 
   const getAccountTypeLabel = (type: string) => {
@@ -74,7 +98,8 @@ export function MyAccountsSection({ accounts, onAddAccount, onAction }: MyAccoun
             {accounts.map((account) => (
               <div
                 key={account.id}
-                className={`relative h-40 rounded-2xl bg-gradient-to-br ${getAccountTypeColor(account.type)} p-6 text-white overflow-hidden cursor-pointer hover:scale-105 transition-transform`}
+                className="relative h-40 rounded-2xl p-6 text-white overflow-hidden cursor-pointer hover:scale-105 transition-transform"
+                style={getCardGradient(account)}
               >
                 {/* Background Pattern */}
                 <div className="absolute inset-0 opacity-10">

@@ -47,6 +47,7 @@ export interface Account {
   userId: string;
   name: string;
   type: AccountType;
+  color: string;
   initialBalance: number;
   currentBalance: number;
   creditLimit?: number;

@@ -107,6 +107,7 @@ export class DashboardService {
         id: true,
         name: true,
         type: true,
+        color: true,
         currentBalance: true,
       },
       take: 3, // Mostrar apenas 3 cards principais
@@ -127,6 +128,7 @@ export class DashboardService {
         id: card.id,
         name: card.name,
         type: card.type,
+        color: card.color,
         balance: card.currentBalance,
       })),
     };

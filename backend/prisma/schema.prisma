@@ -38,6 +38,7 @@ model Account {
   userId         String
   name           String
   type           AccountType
+  color          String      @default("#3B82F6")
   initialBalance Float       @default(0)
   currentBalance Float       @default(0)
   active         Boolean     @default(true)

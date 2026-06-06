@@ -15,6 +15,7 @@ export interface AccountCard {
   id: string;
   name: string;
   type: string;
+  color: string;
   balance: number;
 }
 
@@ -57,6 +58,7 @@ export interface DashboardStats {
     id: string;
     name: string;
     type: string;
+    color: string;
     balance: number;
   }>;
 }
