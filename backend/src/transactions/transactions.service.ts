@@ -29,13 +29,26 @@ export class TransactionsService {
 
     // Filtro por intervalo de datas
     if (filters.startDate || filters.endDate) {
-      where.date = {};
+      const dateRange: any = {};
       if (filters.startDate) {
-        where.date.gte = new Date(filters.startDate);
+        dateRange.gte = this.parseDateOnly(filters.startDate);
       }
       if (filters.endDate) {
-        where.date.lte = new Date(filters.endDate);
+        dateRange.lte = this.parseDateOnly(filters.endDate);
       }
+
+      where.AND = where.AND || [];
+      where.AND.push({
+        OR: [
+          { competenceDate: dateRange },
+          {
+            AND: [
+              { competenceDate: null },
+              { date: dateRange },
+            ],
+          },
+        ],
+      });
     }
 
     // Outros filtros
@@ -56,7 +69,7 @@ export class TransactionsService {
       where,
       include: {
         account: {
-          select: { id: true, name: true, type: true },
+          select: { id: true, name: true, type: true, closingDay: true, dueDay: true },
         },
         category: {
           select: { id: true, name: true, icon: true, color: true },
@@ -71,7 +84,7 @@ export class TransactionsService {
       where: { id, userId },
       include: {
         account: {
-          select: { id: true, name: true, type: true },
+          select: { id: true, name: true, type: true, closingDay: true, dueDay: true },
         },
         category: {
           select: { id: true, name: true, icon: true, color: true },
@@ -87,7 +100,20 @@ export class TransactionsService {
   }
 
   async create(userId: string, dto: CreateTransactionDto) {
+    const account = await this.prisma.account.findFirst({
+      where: { id: dto.accountId, userId },
+      select: { type: true, closingDay: true },
+    });
+
+    if (!account) {
+      throw new NotFoundException('Conta não encontrada');
+    }
+
+    const transactionDate = this.parseDateOnly(dto.date);
     const normalizedAmount = this.normalizeAmount(dto.amount, dto.transactionType);
+    const competenceDate = dto.competenceDate
+      ? this.normalizeCompetenceDate(this.parseDateOnly(dto.competenceDate))
+      : this.computeCompetenceDate(transactionDate, normalizedAmount, account);
 
     // Criar a transação
     const transaction = await this.prisma.transaction.create({
@@ -95,7 +121,8 @@ export class TransactionsService {
         userId,
         accountId: dto.accountId,
         categoryId: dto.categoryId,
-        date: new Date(dto.date),
+        date: transactionDate,
+        competenceDate,
         amount: normalizedAmount,
         description: dto.description,
         paymentType: dto.paymentType,
@@ -106,7 +133,7 @@ export class TransactionsService {
       },
       include: {
         account: {
-          select: { id: true, name: true, type: true },
+          select: { id: true, name: true, type: true, closingDay: true, dueDay: true },
         },
         category: {
           select: { id: true, name: true, icon: true, color: true },
@@ -126,9 +153,31 @@ export class TransactionsService {
     const existingTransaction = await this.findOne(id, userId);
     const oldAccountId = existingTransaction.accountId;
     const oldStatus = existingTransaction.status;
-    const normalizedAmount = dto.amount === undefined
-      ? undefined
-      : this.normalizeAmount(dto.amount, dto.transactionType);
+    const nextAccountId = dto.accountId ?? existingTransaction.accountId;
+    const nextDate = dto.date
+      ? this.parseDateOnly(dto.date)
+      : new Date(
+        existingTransaction.date.getFullYear(),
+        existingTransaction.date.getMonth(),
+        existingTransaction.date.getDate(),
+      );
+    const nextAmount = dto.amount ?? existingTransaction.amount;
+    const nextTransactionType = dto.transactionType
+      ?? (nextAmount < 0 ? 'EXPENSE' : 'INCOME');
+    const normalizedAmount = this.normalizeAmount(nextAmount, nextTransactionType);
+
+    const account = await this.prisma.account.findFirst({
+      where: { id: nextAccountId, userId },
+      select: { type: true, closingDay: true },
+    });
+
+    if (!account) {
+      throw new NotFoundException('Conta não encontrada');
+    }
+
+    const competenceDate = dto.competenceDate
+      ? this.normalizeCompetenceDate(this.parseDateOnly(dto.competenceDate))
+      : this.computeCompetenceDate(nextDate, normalizedAmount, account);
 
     // Atualizar a transação
     const transaction = await this.prisma.transaction.update({
@@ -136,7 +185,8 @@ export class TransactionsService {
       data: {
         accountId: dto.accountId,
         categoryId: dto.categoryId,
-        date: dto.date ? new Date(dto.date) : undefined,
+        date: dto.date ? nextDate : undefined,
+        competenceDate,
         amount: normalizedAmount,
         description: dto.description,
         paymentType: dto.paymentType,
@@ -145,7 +195,7 @@ export class TransactionsService {
       },
       include: {
         account: {
-          select: { id: true, name: true, type: true },
+          select: { id: true, name: true, type: true, closingDay: true, dueDay: true },
         },
         category: {
           select: { id: true, name: true, icon: true, color: true },
@@ -241,5 +291,45 @@ export class TransactionsService {
     }
 
     return amount;
+  }
+
+  private computeCompetenceDate(
+    transactionDate: Date,
+    normalizedAmount: number,
+    account: { type: string; closingDay: number | null },
+  ) {
+    const baseDate = this.normalizeCompetenceDate(transactionDate);
+
+    if (account.type !== 'CREDIT_CARD' || normalizedAmount >= 0) {
+      return baseDate;
+    }
+
+    const closingDay = account.closingDay;
+    if (!closingDay) {
+      return baseDate;
+    }
+
+    const competenceDate = new Date(baseDate);
+    const purchaseDay = transactionDate.getDate();
+
+    if (purchaseDay > closingDay) {
+      competenceDate.setMonth(competenceDate.getMonth() + 1);
+    }
+
+    return competenceDate;
+  }
+
+  private normalizeCompetenceDate(date: Date) {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+  }
+
+  private parseDateOnly(value: string) {
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (match) {
+      const [, year, month, day] = match;
+      return new Date(Number(year), Number(month) - 1, Number(day));
+    }
+
+    return new Date(value);
   }
 }

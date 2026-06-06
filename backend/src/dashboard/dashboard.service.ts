@@ -6,7 +6,11 @@ import type { DashboardStatsDto } from './dto/dashboard-stats.dto';
 export class DashboardService {
   constructor(private readonly prisma: PrismaService) { }
 
-  async getStats(userId: string): Promise<DashboardStatsDto> {
+  async getStats(
+    userId: string,
+    selectedMonth?: number,
+    selectedYear?: number,
+  ): Promise<DashboardStatsDto> {
     // Buscar todas as contas do usuário
     const accounts = await this.prisma.account.findMany({
       where: { userId },
@@ -44,7 +48,25 @@ export class DashboardService {
       transactions.filter((t) => t.amount < 0).reduce((sum, t) => sum + t.amount, 0),
     );
 
-    // Gastos por categoria (apenas despesas)
+    const now = new Date();
+    const targetMonth =
+      selectedMonth && selectedMonth >= 1 && selectedMonth <= 12
+        ? selectedMonth
+        : now.getMonth() + 1;
+    const targetYear =
+      selectedYear && Number.isInteger(selectedYear)
+        ? selectedYear
+        : now.getFullYear();
+
+    const transactionsInSelectedMonth = transactions.filter((t) => {
+      const transactionDate = new Date(t.competenceDate || t.date);
+      const transactionMonth = transactionDate.getUTCMonth() + 1;
+      const transactionYear = transactionDate.getUTCFullYear();
+
+      return transactionMonth === targetMonth && transactionYear === targetYear;
+    });
+
+    // Gastos por categoria (apenas despesas) no mês/ano selecionados
     const categoryMap = new Map<
       string,
       {
@@ -56,8 +78,10 @@ export class DashboardService {
       }
     >();
 
-    transactions
-      .filter((t) => t.amount < 0)
+    transactionsInSelectedMonth
+      .filter((t) => {
+        return t.amount < 0;
+      })
       .forEach((t) => {
         if (t.category) {
           const existing = categoryMap.get(t.categoryId);
@@ -82,8 +106,8 @@ export class DashboardService {
     // Tendência mensal (últimos 6 meses)
     const monthlyTrend = this.calculateMonthlyTrend(transactions);
 
-    // Transações recentes (últimas 10)
-    const recentTransactions = transactions.slice(0, 10).map((t) => ({
+    // Transações recentes do mês/ano selecionados (últimas 10)
+    const recentTransactions = transactionsInSelectedMonth.slice(0, 10).map((t) => ({
       id: t.id,
       date: t.date,
       description: t.description,
@@ -151,8 +175,8 @@ export class DashboardService {
 
     // Agrupar transações por mês
     transactions.forEach((t) => {
-      const date = new Date(t.date);
-      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      const date = new Date(t.competenceDate || t.date);
+      const key = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
 
       if (monthsMap.has(key)) {
         const data = monthsMap.get(key)!;

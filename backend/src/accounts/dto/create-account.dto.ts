@@ -1,10 +1,13 @@
 import {
   IsEnum,
   IsHexColor,
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  Max,
+  Min,
 } from 'class-validator';
 
 export class CreateAccountDto {
@@ -23,4 +26,16 @@ export class CreateAccountDto {
   @IsOptional()
   @IsHexColor()
   color?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(31)
+  closingDay?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(31)
+  dueDay?: number;
 }

@@ -22,6 +22,10 @@ export class CreateTransactionDto {
   @IsDateString()
   date: string;
 
+  @IsOptional()
+  @IsDateString()
+  competenceDate?: string;
+
   @IsNotEmpty()
   @IsNumber()
   @NotEquals(0, { message: 'O valor nao pode ser zero' })
