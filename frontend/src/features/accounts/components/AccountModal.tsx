@@ -14,6 +14,26 @@ const buildAccountSchema = (nameRequired: string) => z.object({
   type: z.enum(['CHECKING', 'SAVINGS', 'CREDIT_CARD']),
   initialBalance: z.number().optional(),
   color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+  closingDay: z.number().int().min(1).max(31).optional(),
+  dueDay: z.number().int().min(1).max(31).optional(),
+}).superRefine((data, ctx) => {
+  if (data.type === 'CREDIT_CARD') {
+    if (!data.closingDay) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['closingDay'],
+        message: 'Dia de fechamento é obrigatório para cartão de crédito',
+      });
+    }
+
+    if (!data.dueDay) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['dueDay'],
+        message: 'Dia de vencimento é obrigatório para cartão de crédito',
+      });
+    }
+  }
 });
 
 type AccountFormData = z.infer<ReturnType<typeof buildAccountSchema>>;
@@ -49,6 +69,7 @@ export function AccountModal({
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<AccountFormData>({
     resolver: zodResolver(accountSchema),
@@ -57,8 +78,12 @@ export function AccountModal({
       type: account?.type || 'CHECKING',
       initialBalance: account?.initialBalance || 0,
       color: account?.color || '#3B82F6',
+      closingDay: account?.closingDay,
+      dueDay: account?.dueDay,
     },
   });
+
+  const accountType = watch('type');
 
   useEffect(() => {
     if (account) {
@@ -67,6 +92,8 @@ export function AccountModal({
         type: account.type,
         initialBalance: account.initialBalance,
         color: account.color || '#3B82F6',
+        closingDay: account.closingDay,
+        dueDay: account.dueDay,
       });
     } else {
       reset({
@@ -74,6 +101,8 @@ export function AccountModal({
         type: 'CHECKING',
         initialBalance: 0,
         color: '#3B82F6',
+        closingDay: undefined,
+        dueDay: undefined,
       });
     }
   }, [account, reset]);
@@ -197,6 +226,42 @@ export function AccountModal({
               </div>
             </div>
           </div>
+
+          {accountType === 'CREDIT_CARD' && (
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Dia de Fechamento
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={31}
+                  {...register('closingDay', { valueAsNumber: true })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                />
+                {errors.closingDay && (
+                  <p className="text-red-500 text-sm mt-1">{errors.closingDay.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  Dia de Vencimento
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={31}
+                  {...register('dueDay', { valueAsNumber: true })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                />
+                {errors.dueDay && (
+                  <p className="text-red-500 text-sm mt-1">{errors.dueDay.message}</p>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex gap-3 pt-4">

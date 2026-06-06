@@ -6,6 +6,8 @@ interface CreateAccountData {
   type: 'CHECKING' | 'SAVINGS' | 'CREDIT_CARD';
   initialBalance?: number;
   color?: string;
+  closingDay?: number;
+  dueDay?: number;
 }
 
 interface UpdateAccountData {
@@ -13,6 +15,8 @@ interface UpdateAccountData {
   type?: 'CHECKING' | 'SAVINGS' | 'CREDIT_CARD';
   initialBalance?: number;
   color?: string;
+  closingDay?: number;
+  dueDay?: number;
 }
 
 export const accountsApi = {

@@ -48,11 +48,11 @@ export interface Account {
   name: string;
   type: AccountType;
   color: string;
+  closingDay?: number;
+  dueDay?: number;
   initialBalance: number;
   currentBalance: number;
   creditLimit?: number;
-  closingDay?: number;
-  dueDay?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -74,6 +74,7 @@ export interface Transaction {
   accountId: string;
   categoryId: string;
   date: Date;
+  competenceDate?: Date;
   amount: number;
   description: string;
   paymentType: PaymentType;
@@ -112,6 +113,7 @@ export interface CreateTransactionDto {
   accountId: string;
   categoryId: string;
   date: string;
+  competenceDate?: string;
   amount: number;
   transactionType?: 'EXPENSE' | 'INCOME';
   description: string;

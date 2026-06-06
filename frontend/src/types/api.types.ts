@@ -79,17 +79,19 @@ export interface CreateAccountRequest {
   type: string;
   initialBalance: number;
   color?: string;
-  creditLimit?: number;
   closingDay?: number;
   dueDay?: number;
+  creditLimit?: number;
 }
 
 export interface UpdateAccountRequest {
   name?: string;
   color?: string;
-  creditLimit?: number;
+  type?: string;
+  initialBalance?: number;
   closingDay?: number;
   dueDay?: number;
+  creditLimit?: number;
 }
 
 // Categories
