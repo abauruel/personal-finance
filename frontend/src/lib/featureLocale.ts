@@ -55,6 +55,9 @@ type TransactionMessages = {
   form: {
     editTitle: string;
     createTitle: string;
+    transactionType: string;
+    expense: string;
+    income: string;
     account: string;
     accountPlaceholder: string;
     category: string;
@@ -225,6 +228,9 @@ const transactionMessagesPt: TransactionMessages = {
   form: {
     editTitle: 'Editar Transação',
     createTitle: 'Nova Transação',
+    transactionType: 'Tipo da Transação *',
+    expense: 'Despesa',
+    income: 'Receita',
     account: 'Conta *',
     accountPlaceholder: 'Selecione uma conta',
     category: 'Categoria *',
@@ -343,6 +349,9 @@ const transactionMessagesEn: TransactionMessages = {
   form: {
     editTitle: 'Edit Transaction',
     createTitle: 'New Transaction',
+    transactionType: 'Transaction Type *',
+    expense: 'Expense',
+    income: 'Income',
     account: 'Account *',
     accountPlaceholder: 'Select an account',
     category: 'Category *',

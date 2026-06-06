@@ -112,6 +112,7 @@ export interface CreateTransactionDto {
   categoryId: string;
   date: string;
   amount: number;
+  transactionType?: 'EXPENSE' | 'INCOME';
   description: string;
   paymentType: PaymentType;
   status?: TransactionStatus;

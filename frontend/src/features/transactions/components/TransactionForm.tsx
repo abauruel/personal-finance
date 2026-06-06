@@ -15,6 +15,7 @@ import { useSettings } from '../../../contexts/SettingsContext';
 import { getPaymentTypeLabel, getTransactionMessages, getTransactionStatusLabel } from '../../../lib/featureLocale';
 
 const buildTransactionSchema = (messages: ReturnType<typeof getTransactionMessages>) => z.object({
+  transactionType: z.enum(['EXPENSE', 'INCOME']),
   accountId: z.string().min(1, messages.form.validation.accountRequired),
   categoryId: z.string().min(1, messages.form.validation.categoryRequired),
   date: z.string().min(1, messages.form.validation.dateRequired),
@@ -65,10 +66,11 @@ export function TransactionForm({
     resolver: zodResolver(transactionSchema),
     defaultValues: transaction
       ? {
+        transactionType: transaction.amount < 0 ? 'EXPENSE' : 'INCOME',
         accountId: transaction.accountId,
         categoryId: transaction.categoryId,
         date: new Date(transaction.date).toISOString().split('T')[0],
-        amount: transaction.amount,
+        amount: Math.abs(transaction.amount),
         description: transaction.description,
         paymentType: transaction.paymentType,
         status: transaction.status,
@@ -77,6 +79,7 @@ export function TransactionForm({
         recurringId: transaction.recurringId || '',
       }
       : {
+        transactionType: 'EXPENSE',
         date: new Date().toISOString().split('T')[0],
         status: 'PENDING',
         paymentType: 'DEBIT',
@@ -87,10 +90,11 @@ export function TransactionForm({
   useEffect(() => {
     if (transaction) {
       reset({
+        transactionType: transaction.amount < 0 ? 'EXPENSE' : 'INCOME',
         accountId: transaction.accountId,
         categoryId: transaction.categoryId,
         date: new Date(transaction.date).toISOString().split('T')[0],
-        amount: transaction.amount,
+        amount: Math.abs(transaction.amount),
         description: transaction.description,
         paymentType: transaction.paymentType,
         status: transaction.status,
@@ -101,8 +105,17 @@ export function TransactionForm({
     }
   }, [transaction, reset]);
 
+  const handleFormSubmit = (data: TransactionFormData) => {
+    const absAmount = Math.abs(data.amount);
+
+    onSubmit({
+      ...data,
+      amount: data.transactionType === 'EXPENSE' ? -absAmount : absAmount,
+    });
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">
           {transaction ? messages.form.editTitle : messages.form.createTitle}
@@ -114,6 +127,20 @@ export function TransactionForm({
         >
           <X size={20} />
         </button>
+      </div>
+
+      {/* Account Selection */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {messages.form.transactionType}
+        </label>
+        <select
+          {...register('transactionType')}
+          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="EXPENSE">{messages.form.expense}</option>
+          <option value="INCOME">{messages.form.income}</option>
+        </select>
       </div>
 
       {/* Account Selection */}

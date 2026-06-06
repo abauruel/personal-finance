@@ -87,6 +87,8 @@ export class TransactionsService {
   }
 
   async create(userId: string, dto: CreateTransactionDto) {
+    const normalizedAmount = this.normalizeAmount(dto.amount, dto.transactionType);
+
     // Criar a transação
     const transaction = await this.prisma.transaction.create({
       data: {
@@ -94,7 +96,7 @@ export class TransactionsService {
         accountId: dto.accountId,
         categoryId: dto.categoryId,
         date: new Date(dto.date),
-        amount: dto.amount,
+        amount: normalizedAmount,
         description: dto.description,
         paymentType: dto.paymentType,
         status: dto.status || 'PENDING',
@@ -124,6 +126,9 @@ export class TransactionsService {
     const existingTransaction = await this.findOne(id, userId);
     const oldAccountId = existingTransaction.accountId;
     const oldStatus = existingTransaction.status;
+    const normalizedAmount = dto.amount === undefined
+      ? undefined
+      : this.normalizeAmount(dto.amount, dto.transactionType);
 
     // Atualizar a transação
     const transaction = await this.prisma.transaction.update({
@@ -132,7 +137,7 @@ export class TransactionsService {
         accountId: dto.accountId,
         categoryId: dto.categoryId,
         date: dto.date ? new Date(dto.date) : undefined,
-        amount: dto.amount,
+        amount: normalizedAmount,
         description: dto.description,
         paymentType: dto.paymentType,
         status: dto.status,
@@ -219,5 +224,22 @@ export class TransactionsService {
       where: { id: accountId },
       data: { currentBalance: newBalance },
     });
+  }
+
+  private normalizeAmount(
+    amount: number,
+    transactionType?: 'EXPENSE' | 'INCOME',
+  ): number {
+    const absAmount = Math.abs(amount);
+
+    if (transactionType === 'INCOME') {
+      return absAmount;
+    }
+
+    if (transactionType === 'EXPENSE') {
+      return -absAmount;
+    }
+
+    return amount;
   }
 }

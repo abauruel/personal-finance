@@ -27,6 +27,10 @@ export class CreateTransactionDto {
   @NotEquals(0, { message: 'O valor nao pode ser zero' })
   amount: number;
 
+  @IsOptional()
+  @IsEnum(['EXPENSE', 'INCOME'])
+  transactionType?: 'EXPENSE' | 'INCOME';
+
   @IsNotEmpty()
   @IsString()
   description: string;
