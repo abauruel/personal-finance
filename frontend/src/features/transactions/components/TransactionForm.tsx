@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -19,6 +19,7 @@ const buildTransactionSchema = (messages: ReturnType<typeof getTransactionMessag
   accountId: z.string().min(1, messages.form.validation.accountRequired),
   categoryId: z.string().min(1, messages.form.validation.categoryRequired),
   date: z.string().min(1, messages.form.validation.dateRequired),
+  competenceDate: z.string().min(1, messages.form.validation.dateRequired),
   amount: z.number().min(0.01, messages.form.validation.amountMin),
   description: z.string().min(1, messages.form.validation.descriptionRequired),
   paymentType: z.enum(['DEBIT', 'CREDIT', 'PIX', 'CASH', 'TRANSFER']),
@@ -37,6 +38,14 @@ interface TransactionFormProps {
   isLoading?: boolean;
 }
 
+const toCompetenceMonthInput = (value: Date | string) => {
+  const parsedDate = new Date(value);
+  const year = parsedDate.getUTCFullYear();
+  const month = String(parsedDate.getUTCMonth() + 1).padStart(2, '0');
+
+  return `${year}-${month}`;
+};
+
 export function TransactionForm({
   transaction,
   onSubmit,
@@ -46,6 +55,7 @@ export function TransactionForm({
   const { settings } = useSettings();
   const messages = getTransactionMessages(settings.locale);
   const transactionSchema = buildTransactionSchema(messages);
+  const [hasManualCompetence, setHasManualCompetence] = useState(false);
 
   const { data: accounts = [] } = useQuery({
     queryKey: ['accounts'],
@@ -60,6 +70,8 @@ export function TransactionForm({
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
     reset,
   } = useForm<TransactionFormData>({
@@ -70,6 +82,7 @@ export function TransactionForm({
         accountId: transaction.accountId,
         categoryId: transaction.categoryId,
         date: new Date(transaction.date).toISOString().split('T')[0],
+        competenceDate: toCompetenceMonthInput(transaction.competenceDate || transaction.date),
         amount: Math.abs(transaction.amount),
         description: transaction.description,
         paymentType: transaction.paymentType,
@@ -81,19 +94,52 @@ export function TransactionForm({
       : {
         transactionType: 'EXPENSE',
         date: new Date().toISOString().split('T')[0],
+        competenceDate: new Date().toISOString().slice(0, 7),
         status: 'PENDING',
         paymentType: 'DEBIT',
         isRecurring: false,
       },
   });
 
+  const selectedAccountId = watch('accountId');
+  const selectedDate = watch('date');
+  const selectedTransactionType = watch('transactionType');
+
+  const computedCompetenceMonth = useMemo(() => {
+    if (!selectedDate) {
+      return '';
+    }
+
+    const transactionDate = new Date(`${selectedDate}T00:00:00`);
+    const selectedAccount = accounts.find((account) => account.id === selectedAccountId);
+    let competenceMonth = transactionDate.getMonth() + 1;
+    let competenceYear = transactionDate.getFullYear();
+
+    if (
+      selectedAccount?.type === 'CREDIT_CARD' &&
+      selectedTransactionType === 'EXPENSE' &&
+      selectedAccount.closingDay &&
+      transactionDate.getDate() > selectedAccount.closingDay
+    ) {
+      competenceMonth += 1;
+      if (competenceMonth > 12) {
+        competenceMonth = 1;
+        competenceYear += 1;
+      }
+    }
+
+    return `${competenceYear}-${String(competenceMonth).padStart(2, '0')}`;
+  }, [accounts, selectedAccountId, selectedDate, selectedTransactionType]);
+
   useEffect(() => {
     if (transaction) {
+      setHasManualCompetence(false);
       reset({
         transactionType: transaction.amount < 0 ? 'EXPENSE' : 'INCOME',
         accountId: transaction.accountId,
         categoryId: transaction.categoryId,
         date: new Date(transaction.date).toISOString().split('T')[0],
+        competenceDate: toCompetenceMonthInput(transaction.competenceDate || transaction.date),
         amount: Math.abs(transaction.amount),
         description: transaction.description,
         paymentType: transaction.paymentType,
@@ -102,14 +148,28 @@ export function TransactionForm({
         isRecurring: transaction.isRecurring,
         recurringId: transaction.recurringId || '',
       });
+      return;
     }
-  }, [transaction, reset]);
+
+    setHasManualCompetence(false);
+    reset((currentValues) => ({
+      ...currentValues,
+      competenceDate: computedCompetenceMonth || new Date().toISOString().slice(0, 7),
+    }));
+  }, [transaction, reset, computedCompetenceMonth]);
+
+  useEffect(() => {
+    if (!hasManualCompetence && computedCompetenceMonth) {
+      setValue('competenceDate', computedCompetenceMonth, { shouldValidate: true });
+    }
+  }, [computedCompetenceMonth, hasManualCompetence, setValue]);
 
   const handleFormSubmit = (data: TransactionFormData) => {
     const absAmount = Math.abs(data.amount);
 
     onSubmit({
       ...data,
+      competenceDate: `${data.competenceDate}-01`,
       amount: data.transactionType === 'EXPENSE' ? -absAmount : absAmount,
     });
   };
@@ -191,6 +251,20 @@ export function TransactionForm({
           {messages.form.date}
         </label>
         <Input type="date" {...register('date')} error={errors.date?.message} />
+      </div>
+
+      {/* Competence */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {messages.form.competence}
+        </label>
+        <Input
+          type="month"
+          {...register('competenceDate', {
+            onChange: () => setHasManualCompetence(true),
+          })}
+          error={errors.competenceDate?.message}
+        />
       </div>
 
       {/* Amount */}

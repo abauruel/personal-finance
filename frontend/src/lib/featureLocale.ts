@@ -10,6 +10,8 @@ type TransactionMessages = {
   totalTransactions: string;
   income: string;
   expenses: string;
+  month: string;
+  year: string;
   confirmDelete: string;
   createSuccess: string;
   createError: string;
@@ -24,6 +26,7 @@ type TransactionMessages = {
     empty: string;
     emptyHint: string;
     date: string;
+    competence: string;
     description: string;
     category: string;
     account: string;
@@ -63,6 +66,7 @@ type TransactionMessages = {
     category: string;
     categoryPlaceholder: string;
     date: string;
+    competence: string;
     amount: string;
     description: string;
     descriptionPlaceholder: string;
@@ -183,6 +187,8 @@ const transactionMessagesPt: TransactionMessages = {
   totalTransactions: 'Total de Transações',
   income: 'Receitas',
   expenses: 'Despesas',
+  month: 'Mês',
+  year: 'Ano',
   confirmDelete: 'Deseja realmente excluir esta transação?',
   createSuccess: 'Transação criada com sucesso!',
   createError: 'Erro ao criar transação',
@@ -197,6 +203,7 @@ const transactionMessagesPt: TransactionMessages = {
     empty: 'Nenhuma transação encontrada',
     emptyHint: 'Tente ajustar os filtros ou criar uma nova transação',
     date: 'Data',
+    competence: 'Competência',
     description: 'Descrição',
     category: 'Categoria',
     account: 'Conta',
@@ -236,6 +243,7 @@ const transactionMessagesPt: TransactionMessages = {
     category: 'Categoria *',
     categoryPlaceholder: 'Selecione uma categoria',
     date: 'Data *',
+    competence: 'Competência *',
     amount: 'Valor *',
     description: 'Descrição *',
     descriptionPlaceholder: 'Ex: Supermercado, Salário...',
@@ -304,6 +312,8 @@ const transactionMessagesEn: TransactionMessages = {
   totalTransactions: 'Total Transactions',
   income: 'Income',
   expenses: 'Expenses',
+  month: 'Month',
+  year: 'Year',
   confirmDelete: 'Do you really want to delete this transaction?',
   createSuccess: 'Transaction created successfully!',
   createError: 'Error creating transaction',
@@ -318,6 +328,7 @@ const transactionMessagesEn: TransactionMessages = {
     empty: 'No transactions found',
     emptyHint: 'Try adjusting the filters or creating a new transaction',
     date: 'Date',
+    competence: 'Competence',
     description: 'Description',
     category: 'Category',
     account: 'Account',
@@ -357,6 +368,7 @@ const transactionMessagesEn: TransactionMessages = {
     category: 'Category *',
     categoryPlaceholder: 'Select a category',
     date: 'Date *',
+    competence: 'Competence *',
     amount: 'Amount *',
     description: 'Description *',
     descriptionPlaceholder: 'Ex: Grocery store, Salary...',

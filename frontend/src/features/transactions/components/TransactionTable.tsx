@@ -95,6 +95,15 @@ export function TransactionTable({
     );
   };
 
+  const formatCompetence = (transaction: Transaction) => {
+    const date = new Date(transaction.competenceDate || transaction.date);
+    return new Intl.DateTimeFormat(settings.locale, {
+      month: '2-digit',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }).format(date);
+  };
+
   if (isLoading) {
     return (
       <div className="bg-white rounded-xl shadow-card border border-gray-100 p-12 text-center">
@@ -131,6 +140,9 @@ export function TransactionTable({
                     {messages.table.date}
                     <SortIcon field="date" />
                   </button>
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                  {messages.table.competence}
                 </th>
                 <th className="px-6 py-3 text-left">
                   <button
@@ -178,6 +190,9 @@ export function TransactionTable({
                 <tr key={transaction.id} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {formatDate(transaction.date)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    {formatCompetence(transaction)}
                   </td>
                   <td className="px-6 py-4 text-sm">
                     <div className="font-medium text-gray-900">

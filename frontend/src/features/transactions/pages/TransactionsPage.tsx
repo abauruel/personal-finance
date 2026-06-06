@@ -28,6 +28,15 @@ interface TransactionFiltersType {
   paymentType?: string;
 }
 
+const getCompetenceUtcParts = (value: Date | string) => {
+  const parsedDate = new Date(value);
+
+  return {
+    month: parsedDate.getUTCMonth() + 1,
+    year: parsedDate.getUTCFullYear(),
+  };
+};
+
 const TransactionsPage = () => {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
@@ -39,6 +48,9 @@ const TransactionsPage = () => {
   const [editingTransaction, setEditingTransaction] =
     useState<Transaction | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const currentDate = new Date();
+  const [summaryMonth, setSummaryMonth] = useState(currentDate.getMonth() + 1);
+  const [summaryYear, setSummaryYear] = useState(currentDate.getFullYear());
   const [filters, setFilters] = useState<TransactionFiltersType>({
     search: searchParams.get('search') || undefined,
     startDate: searchParams.get('startDate') || undefined,
@@ -69,6 +81,7 @@ const TransactionsPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       toast.success(messages.createSuccess);
       setIsModalOpen(false);
     },
@@ -83,6 +96,7 @@ const TransactionsPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       toast.success(messages.updateSuccess);
       setIsModalOpen(false);
       setEditingTransaction(null);
@@ -97,6 +111,7 @@ const TransactionsPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       toast.success(messages.deleteSuccess);
     },
     onError: () => {
@@ -153,6 +168,33 @@ const TransactionsPage = () => {
     setFilters({});
   };
 
+  const summaryTransactions = transactions.filter((transaction) => {
+    const { month: transactionMonth, year: transactionYear } = getCompetenceUtcParts(
+      transaction.competenceDate || transaction.date,
+    );
+
+    return transactionMonth === summaryMonth && transactionYear === summaryYear;
+  });
+
+  const summaryIncome = summaryTransactions
+    .filter((t) => t.amount > 0)
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const summaryExpenses = Math.abs(
+    summaryTransactions
+      .filter((t) => t.amount < 0)
+      .reduce((sum, t) => sum + t.amount, 0)
+  );
+
+  const availableYears = Array.from(
+    new Set(
+      transactions.map((transaction) => {
+        const { year } = getCompetenceUtcParts(transaction.competenceDate || transaction.date);
+        return year;
+      })
+    )
+  ).sort((a, b) => b - a);
+
   const activeFiltersCount = Object.values(filters).filter(
     (v) => v !== undefined && v !== ''
   ).length;
@@ -207,31 +249,55 @@ const TransactionsPage = () => {
 
       {/* Stats Summary */}
       {transactions.length > 0 && (
-        <div className="grid grid-cols-3 gap-6">
-          <div className="bg-white rounded-xl p-6 shadow-card border border-gray-100">
-            <div className="text-sm text-gray-600 mb-1">{messages.totalTransactions}</div>
-            <div className="text-2xl font-bold text-gray-900">{transactions.length}</div>
-          </div>
-          <div className="bg-white rounded-xl p-6 shadow-card border border-gray-100">
-            <div className="text-sm text-gray-600 mb-1">{messages.income}</div>
-            <div className="text-2xl font-bold text-green-600">
-              {formatCurrency(
-                transactions
-                  .filter((t) => t.amount > 0)
-                  .reduce((sum, t) => sum + t.amount, 0)
-              )}
+        <div className="space-y-4">
+          <div className="bg-white rounded-xl p-4 shadow-card border border-gray-100 flex flex-wrap items-end gap-4">
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">{messages.month}</label>
+              <select
+                value={summaryMonth}
+                onChange={(e) => setSummaryMonth(Number(e.target.value))}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+              >
+                {Array.from({ length: 12 }, (_, index) => index + 1).map((month) => (
+                  <option key={month} value={month}>
+                    {month.toString().padStart(2, '0')}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">{messages.year}</label>
+              <select
+                value={summaryYear}
+                onChange={(e) => setSummaryYear(Number(e.target.value))}
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition"
+              >
+                {(availableYears.length > 0 ? availableYears : [summaryYear]).map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
-          <div className="bg-white rounded-xl p-6 shadow-card border border-gray-100">
-            <div className="text-sm text-gray-600 mb-1">{messages.expenses}</div>
-            <div className="text-2xl font-bold text-red-600">
-              {formatCurrency(
-                Math.abs(
-                  transactions
-                    .filter((t) => t.amount < 0)
-                    .reduce((sum, t) => sum + t.amount, 0)
-                )
-              )}
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-xl p-6 shadow-card border border-gray-100">
+              <div className="text-sm text-gray-600 mb-1">{messages.totalTransactions}</div>
+              <div className="text-2xl font-bold text-gray-900">{summaryTransactions.length}</div>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-card border border-gray-100">
+              <div className="text-sm text-gray-600 mb-1">{messages.income}</div>
+              <div className="text-2xl font-bold text-green-600">
+                {formatCurrency(summaryIncome)}
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-card border border-gray-100">
+              <div className="text-sm text-gray-600 mb-1">{messages.expenses}</div>
+              <div className="text-2xl font-bold text-red-600">
+                {formatCurrency(summaryExpenses)}
+              </div>
             </div>
           </div>
         </div>
