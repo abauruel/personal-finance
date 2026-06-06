@@ -50,7 +50,7 @@ export const Modal: React.FC<ModalProps> = ({
     >
       <div
         className={cn(
-          'bg-white rounded-lg shadow-xl w-full',
+          'bg-white rounded-lg shadow-xl w-full max-h-[calc(100vh-2rem)] flex flex-col overflow-hidden',
           sizes[size]
         )}
         onClick={(e) => e.stopPropagation()}
@@ -60,7 +60,7 @@ export const Modal: React.FC<ModalProps> = ({
             <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
           </div>
         )}
-        <div className="px-6 py-4">{children}</div>
+        <div className="px-6 py-4 overflow-y-auto">{children}</div>
         {footer && (
           <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 rounded-b-lg flex justify-end space-x-2">
             {footer}
